@@ -3,7 +3,7 @@
         <transition name="promo-fade">
             <div v-if="visible" class="promo-backdrop" role="dialog" aria-modal="true" aria-labelledby="first-deposit-title">
                 <section class="promo-card">
-                    <div class="promo-hero" aria-hidden="true"><img src="/assets/images/FortuneTiger.webp" alt=""></div>
+                    <div class="promo-hero" aria-hidden="true"><img :src="promoHeroUrl" alt=""></div>
                     <button class="promo-close" type="button" aria-label="Fechar oferta" @click="close">×</button>
                     <div class="promo-content">
                         <span class="promo-kicker">⚡ OFERTA EXCLUSIVA</span>
@@ -41,6 +41,7 @@ export default {
             visible: false,
             remaining: 0,
             timer: null,
+            promoHeroUrl: "/assets/images/FortuneTiger.webp",
             offers: [
                 { amount: 20, spins: 10 },
                 { amount: 50, spins: 25 },
