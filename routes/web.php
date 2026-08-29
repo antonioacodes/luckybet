@@ -50,7 +50,7 @@ include_once(__DIR__ . '/groups/provider/drakon.php');
 
 
 // GATEWAYS
-include_once(__DIR__ . '/groups/gateways/digitopay.php');
+// DigitoPay desativado: controller removido do projeto.
 // include_once(__DIR__ . '/groups/gateways/sharkpay.php');
 // include_once(__DIR__ . '/groups/gateways/mercadopago.php');
 include_once(__DIR__ . '/groups/gateways/suitpay.php');
