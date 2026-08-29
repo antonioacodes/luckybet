@@ -1,0 +1,40 @@
+<?php
+
+namespace App\Filament\Admin\Resources\GameResource\Pages;
+
+use App\Filament\Admin\Resources\GameResource;
+use Filament\Actions;
+use Filament\Resources\Pages\EditRecord;
+use Illuminate\Database\Eloquent\Model;
+
+class EditGame extends EditRecord
+{
+    protected static string $resource = GameResource::class;
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Actions\DeleteAction::make(),
+        ];
+    }
+
+    protected function handleRecordUpdate(Model $record, array $data): Model
+    {
+        if(isset($data['show_home']) && $data['show_home'] == 1) {
+            $data['status'] = 1;
+        }
+
+        $record->update($data);
+
+        return $record;
+    }
+  
+  	    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        if (empty($data['cover']) || $data['cover'] === null) {
+            unset($data['cover']);
+        }
+
+        return $data;
+    }
+}
