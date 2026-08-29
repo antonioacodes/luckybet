@@ -73,6 +73,9 @@ export const useAuthStore = defineStore("auth", () => {
      * Logout
      */
     function logout() {
+        Object.keys(sessionStorage)
+            .filter(key => key.startsWith('first-deposit-promo-dismissed-'))
+            .forEach(key => sessionStorage.removeItem(key));
         localStorage.removeItem('token');
         localStorage.removeItem('user');
         token.value = '';
