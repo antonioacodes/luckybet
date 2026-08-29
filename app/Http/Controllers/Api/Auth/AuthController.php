@@ -416,8 +416,8 @@ public function register(Request $request)
 
                         Wallet::where('user_id', $user->id)->increment('balance_bonus', $value);
                     }
-                } catch (Exception $e) {
-                    return response()->json(['error' => $e->getMessage()], 400);
+                } catch (\\Throwable $e) {
+                    Log::warning('Não foi possível processar o spin do cadastro', ['exception' => $e]);
                 }
             }
 
