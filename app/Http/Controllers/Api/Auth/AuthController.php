@@ -290,7 +290,7 @@ public function register(Request $request)
         ]);
 
         $rules = [
-            'cpf'      => 'required|string|cpf|unique:users',
+            'cpf'      => 'required|digits:11|unique:users,cpf',
             'phone'    => 'required|string|unique:users',
             'email'    => 'required|email|unique:users',
             'password' => ['required', Rules\Password::min(6)],
