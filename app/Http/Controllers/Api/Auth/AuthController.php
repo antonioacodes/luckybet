@@ -307,12 +307,18 @@ public function register(Request $request)
         $cpf = $request->input('cpf');
         $email = $request->input('email');
 
-        // Consulta os dados usando o CPF
-        $dadosCpf = $this->consultarNomePorCpf($cpf);
+        // A consulta externa de CPF não pode bloquear o cadastro.
+        // O CPF continua validado pelo dígito verificador e pela unicidade acima.
+        $dadosCpf = ['nome' => null, 'nascimento' => null];
+        $nomeTemporario = Str::headline(Str::before($email, '@')) ?: 'Usuário';
 
         // Montando os dados do usuário
         $userData = $request->only(['password', 'email', 'phone', 'cpf']);
-        $userData['name'] = $dadosCpf['nome']; // Nome obtido pela API
+        $userData['name'] = $nomeTemporario;
+
+        Log::info('Cadastro criado sem depender da API externa de CPF', [
+            'cpf_final' => substr(preg_replace('/[^0-9]/', '', $cpf), -4),
+        ]);
         $userData['phone'] = \Helper::soNumero($userData['phone']);
         $userData['affiliate_revenue_share'] = $setting->revshare_percentage;
         $userData['affiliate_cpa'] = $setting->cpa_value;
@@ -429,8 +435,9 @@ public function register(Request $request)
             return $this->respondWithToken($token);
         }
 
-    } catch (Exception $e) {
-        return response()->json(['error' => $e->getMessage()], 400);
+    } catch (\\Throwable $e) {
+        Log::error('Erro ao registrar usuário', ['exception' => $e]);
+        return response()->json(['error' => 'Não foi possível concluir o cadastro.'], 400);
     }
 }
     /*** Get the authenticated User.
