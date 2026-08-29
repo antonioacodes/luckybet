@@ -1,4 +1,5 @@
 <template>
+    <FirstDepositPromoModal />
     <div>
         <!-- EFEITO DE NEVE (Integrado diretamente) 
         <div class="snow-container fixed inset-0 w-full h-full pointer-events-none z-[9]" aria-hidden="true">
@@ -116,6 +117,7 @@ import MissionDaily from "@/Pages/Home/Components/MissionDaily.vue";
 import MissionWeekly from "@/Pages/Home/Components/MissionWeekly.vue";
 import {searchGameStore} from "@/Stores/SearchGameStore.js";
 import ButtonFloatWidget from "@/Components/Widgets/ButtonFloatWidget.vue";
+import FirstDepositPromoModal from "@/Components/Promotions/FirstDepositPromoModal.vue";
 import { sidebarStore } from "@/Stores/SideBarStore.js";
 
 export default {
@@ -128,6 +130,7 @@ export default {
         SideBarComponent,
         NavTopComponent,
         ButtonFloatWidget,
+        FirstDepositPromoModal,
     },
     data() {
         return {
