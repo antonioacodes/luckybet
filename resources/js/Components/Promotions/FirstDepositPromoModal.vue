@@ -67,12 +67,22 @@ export default {
                 else this.visible = false;
             },
         },
+        "$route.name": {
+            handler(routeName) {
+                if (routeName === 'profileDeposit') this.visible = false;
+                else if (this.auth.isAuth) this.checkEligibility();
+            },
+        },
     },
     beforeUnmount() {
         clearInterval(this.timer);
     },
     methods: {
         async checkEligibility() {
+            if (this.$route.name === 'profileDeposit') {
+                this.visible = false;
+                return;
+            }
             try {
                 const { data } = await HttpApi.get("wallet/deposit/first-deposit-status");
                 const hasCompletedDeposit = Boolean(data?.hasCompletedDeposit);
@@ -110,9 +120,10 @@ export default {
             this.visible = false;
         },
         goToDeposit(amount) {
-            if (amount) localStorage.setItem("first-deposit-promo-amount", String(amount));
             this.visible = false;
-            this.$router.push({ name: "profileDeposit" });
+            window.dispatchEvent(new CustomEvent('open-deposit-modal', {
+                detail: { amount: amount || null },
+            }));
         },
     },
 };
