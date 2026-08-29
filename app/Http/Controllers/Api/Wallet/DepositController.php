@@ -61,6 +61,15 @@ class DepositController extends Controller
     /**
      * Display a listing of the resource.
      */
+    public function firstDepositStatus()
+    {
+        $hasCompletedDeposit = Deposit::where('user_id', auth('api')->id())
+            ->where('status', Deposit::STATUS_COMPLETED)
+            ->exists();
+
+        return response()->json(['hasCompletedDeposit' => $hasCompletedDeposit]);
+    }
+
     public function index()
     {
         $deposits = Deposit::select('amount', 'created_at', 'currency', 'id', 'status', 'symbol', 'type', 'updated_at', 'user_id')
