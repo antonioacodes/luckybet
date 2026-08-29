@@ -283,6 +283,12 @@ public function register(Request $request)
     try {
         $setting = \Helper::getSetting();
 
+        // Normaliza os campos mascarados antes da validação.
+        $request->merge([
+            'cpf' => preg_replace('/[^0-9]/', '', (string) $request->input('cpf')),
+            'phone' => preg_replace('/[^0-9]/', '', (string) $request->input('phone')),
+        ]);
+
         $rules = [
             'cpf'      => 'required|string|cpf|unique:users',
             'phone'    => 'required|string|unique:users',
