@@ -72,9 +72,8 @@ export default {
     methods: {
         async checkEligibility() {
             try {
-                const { data } = await HttpApi.get("wallet/deposit");
-                const deposits = data?.deposits?.data || [];
-                const hasCompletedDeposit = deposits.some(deposit => Number(deposit.status) === 1);
+                const { data } = await HttpApi.get("wallet/deposit/first-deposit-status");
+                const hasCompletedDeposit = Boolean(data?.hasCompletedDeposit);
                 const userId = this.auth.user?.id || "guest";
                 const dismissed = sessionStorage.getItem(`first-deposit-promo-dismissed-${userId}`);
 
