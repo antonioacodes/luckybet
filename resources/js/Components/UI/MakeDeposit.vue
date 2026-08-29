@@ -82,7 +82,7 @@
 
             
 
-                <DepositWidget />
+                <DepositWidget ref="depositWidget" />
             </div>
         </div>
     </div>
@@ -166,11 +166,19 @@
                     
                 },
             });
+            window.addEventListener('open-deposit-modal', this.openDepositFromPromotion);
         },
         beforeUnmount() {
-
+            window.removeEventListener('open-deposit-modal', this.openDepositFromPromotion);
         },
         methods: {
+            openDepositFromPromotion(event) {
+                const amount = Number(event?.detail?.amount);
+                if (amount && this.$refs.depositWidget) {
+                    this.$refs.depositWidget.setAmount(amount);
+                }
+                this.modalDeposit.show();
+            },
             getWallet: async function() {
                 const _this = this;
 
