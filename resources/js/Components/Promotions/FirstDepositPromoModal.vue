@@ -3,10 +3,11 @@
         <transition name="promo-fade">
             <div v-if="visible" class="promo-backdrop" role="dialog" aria-modal="true" aria-labelledby="first-deposit-title">
                 <section class="promo-card">
+                    <div class="promo-hero" aria-hidden="true"><img src="/assets/images/FortuneTiger.webp" alt=""></div>
                     <button class="promo-close" type="button" aria-label="Fechar oferta" @click="close">×</button>
                     <div class="promo-content">
-                        <span class="promo-kicker">⚡ OFERTA DE BOAS-VINDAS</span>
-                        <h2 id="first-deposit-title">Deposite e ganhe<br><strong>rodadas grátis</strong></h2>
+                        <span class="promo-kicker">⚡ OFERTA EXCLUSIVA</span>
+                        <h2 id="first-deposit-title">Recarregue e ganhe<br><strong>rodadas grátis</strong></h2>
                         <p class="promo-subtitle">Escolha uma oferta e aproveite enquanto há tempo.</p>
                         <div class="promo-expiry">
                             <span>EXPIRA EM</span>
@@ -117,9 +118,11 @@ export default {
 <style scoped>
 .promo-backdrop{position:fixed;inset:0;z-index:9999999;display:grid;place-items:center;padding:18px;background:rgba(5,7,18,.86);backdrop-filter:blur(7px)}
 .promo-card{position:relative;width:min(430px,100%);overflow:hidden;border:1px solid rgba(167,244,50,.35);border-radius:24px;background:radial-gradient(circle at 80% 10%,rgba(167,244,50,.18),transparent 35%),linear-gradient(145deg,#28233f,#111522 65%);box-shadow:0 25px 80px rgba(0,0,0,.65),0 0 45px rgba(167,244,50,.12);color:#fff}
-.promo-content{padding:34px 24px 24px}.promo-close{position:absolute;right:14px;top:12px;z-index:2;width:34px;height:34px;border:1px solid rgba(255,255,255,.25);border-radius:50%;font-size:25px;line-height:28px;color:#fff;background:rgba(0,0,0,.25)}
+.promo-hero{position:absolute;right:-35px;top:18px;width:205px;height:205px;opacity:.7;filter:saturate(1.15) drop-shadow(0 12px 22px rgba(0,0,0,.55));pointer-events:none}.promo-hero:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#28233f 0%,transparent 55%)}.promo-hero img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.promo-content{position:relative;z-index:1;padding:34px 24px 24px}.promo-content>h2,.promo-content>.promo-subtitle{max-width:72%}.promo-close{position:absolute;right:14px;top:12px;z-index:2;width:34px;height:34px;border:1px solid rgba(255,255,255,.25);border-radius:50%;font-size:25px;line-height:28px;color:#fff;background:rgba(0,0,0,.25)}
 .promo-kicker{font-size:12px;letter-spacing:.08em;color:#c9c6d8}.promo-card h2{margin:12px 0 8px;font-size:34px;line-height:1.02;text-transform:uppercase;font-weight:900}.promo-card h2 strong{color:#a7f432}.promo-subtitle{color:#c9c6d8;font-size:14px}
 .promo-expiry{display:flex;align-items:flex-end;justify-content:space-between;margin:18px 0 14px;padding:12px 14px;border-radius:12px;background:rgba(0,0,0,.25);color:#ff4f86}.promo-expiry span{font-size:12px;font-weight:800}.promo-expiry strong{font-variant-numeric:tabular-nums;font-size:28px;line-height:1}
 .promo-offers{display:grid;gap:9px}.promo-offers button{display:flex;justify-content:space-between;align-items:center;padding:13px;border:1px solid rgba(255,255,255,.14);border-radius:12px;background:rgba(10,13,27,.72);color:#ddd;text-align:left;font-size:10px}.promo-offers b{display:block;margin-top:2px;font-size:17px;color:#fff}.promo-offers span:last-child{text-align:right}.promo-offers span:last-child b{color:#a7f432}
-.promo-cta{width:100%;margin-top:14px;padding:14px;border-radius:12px;background:#a7f432;color:#10151b;font-size:17px;font-weight:900}.promo-card small{display:block;margin-top:10px;text-align:center;color:#8e92a3;font-size:10px}.promo-fade-enter-active,.promo-fade-leave-active{transition:.2s}.promo-fade-enter-from,.promo-fade-leave-to{opacity:0}
+.promo-cta{width:100%;margin-top:14px;padding:14px;border-radius:12px;background:#a7f432;color:#10151b;font-size:17px;font-weight:900}.promo-card:before{content:"";position:absolute;inset:auto 0 0;height:3px;background:linear-gradient(90deg,#a7f432,#8b5cf6,#ff4f86)}
+.promo-card small{display:block;margin-top:10px;text-align:center;color:#8e92a3;font-size:10px}.promo-fade-enter-active,.promo-fade-leave-active{transition:.2s}.promo-fade-enter-from,.promo-fade-leave-to{opacity:0}
 </style>
