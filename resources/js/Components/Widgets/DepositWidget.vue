@@ -175,6 +175,8 @@
     }
 
     .ratio {
+        position: relative;
+        top: -3px;
         font-size: 10px;
         margin-top: 5px;
     }
