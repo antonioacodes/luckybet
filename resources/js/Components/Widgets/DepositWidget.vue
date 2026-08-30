@@ -175,6 +175,8 @@
     }
 
     .ratio {
+        position: relative;
+        top: -3px;
         font-size: 10px;
         margin-top: 5px;
     }
@@ -416,20 +418,31 @@
                         </div>
                     </div>
                     
+                    <div class="mx-6 mt-3 mb-2 rounded-lg p-3 flex items-center justify-between" style="background: linear-gradient(135deg, rgba(167,244,50,.16), rgba(33,51,38,.9)); border: 1px solid rgba(167,244,50,.28);">
+                            <div>
+                                <div class="text-xs font-extrabold" style="color:#A7F432;">🎁 RODADAS GRÁTIS NO PRIMEIRO DEPÓSITO</div>
+                                <div class="text-[10px] text-white/70">A quantidade aparece em cada valor abaixo.</div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-[9px] text-white/60">EXPIRA EM</div>
+                                <div class="font-extrabold tabular-nums" style="color:#ff4f86;">{{ promoFormattedTime }}</div>
+                            </div>
+                        </div>
+                    
                     <div class="mt-1 item-selected px-6">
                         <div style="background-color: var(--ci-primary-opacity-color);" @click.prevent="setAmount(20.00)" class="item" :class="{'active' : selectedAmount === 20.00}">
                             <button class="ratio2" style="color: var(--ci-primary-color);font-weight: 800;" type="button">{{ wallet.symbol }} 20</button>
-                            <div class="ratio">HOT</div>
+                            <div class="ratio">+10 rodadas grátis</div>
                             <img v-if="selectedAmount === 20.00" class="img-check" :src="`/assets/images/check.png`" alt="">
                         </div>
                         <div style="background-color: var(--ci-primary-opacity-color);" @click.prevent="setAmount(50.00)" class="item" :class="{'active' : selectedAmount === 50.00}">
                             <button class="ratio2" style="color: var(--ci-primary-color);font-weight: 800;" type="button">{{ wallet.symbol }} 50</button>
-                            <div class="ratio">HOT</div>
+                            <div class="ratio">+25 rodadas grátis</div>
                             <img v-if="selectedAmount === 50.00" class="img-check" :src="`/assets/images/check.png`" alt="">
                         </div>
                         <div style="background-color: var(--ci-primary-opacity-color);" @click.prevent="setAmount(100.00)" class="item" :class="{'active' : selectedAmount === 100.00}">
                             <button class="ratio2" style="color: var(--ci-primary-color);font-weight: 800;" type="button">{{ wallet.symbol }} 100</button>
-                            <div class="ratio">HOT</div>
+                            <div class="ratio">+50 rodadas grátis</div>
                             <img v-if="selectedAmount === 100.00" class="img-check" :src="`/assets/images/check.png`" alt="">
                         </div>
                     </div>
@@ -437,17 +450,17 @@
                     <div class="item-selected px-6">
                         <div style="background-color: var(--ci-primary-opacity-color);" @click.prevent="setAmount(250.00)" class="item" :class="{'active' : selectedAmount === 250.00}">
                             <button class="ratio2" style="color: var(--ci-primary-color);font-weight: 800;" type="button">{{ wallet.symbol }} 250</button>
-                            <div class="ratio">HOT</div>
+                            <div class="ratio">+125 rodadas grátis</div>
                             <img v-if="selectedAmount === 250.00" class="img-check" :src="`/assets/images/check.png`" alt="">
                         </div>
                         <div style="background-color: var(--ci-primary-opacity-color);" @click.prevent="setAmount(500.00)" class="item" :class="{'active' : selectedAmount === 500.00}">
                             <button class="ratio2" style="color: var(--ci-primary-color);font-weight: 800;" type="button">{{ wallet.symbol }} 500</button>
-                            <div class="ratio">HOT</div>
+                            <div class="ratio">+250 rodadas grátis</div>
                             <img v-if="selectedAmount === 500.00" class="img-check" :src="`/assets/images/check.png`" alt="">
                         </div>
                         <div style="background-color: var(--ci-primary-opacity-color);text-shadow: 2px 1px 11px var(--ci-primary-color);" @click.prevent="setAmount(1000.00)" class="item" :class="{'active' : selectedAmount === 1000.00}">
                             <button class="ratio2" style="color: var(--ci-primary-color);font-weight: 800;" type="button">{{ wallet.symbol }} 1000</button>
-                            <div class="ratio">HOT</div>
+                            <div class="ratio">+500 rodadas grátis</div>
                             <img v-if="selectedAmount === 1000.00" class="img-check" :src="`/assets/images/check.png`" alt="">
                         </div>
                     </div>
@@ -490,6 +503,8 @@ export default {
             minutes: 15,
             seconds: 0,
             timer: null,
+            promoInterval: null,
+            promoTimeRemaining: 30 * 60,
             setting: null,
             wallet: null,
             deposit: {
@@ -530,6 +545,11 @@ export default {
     },
     
     computed: {
+        promoFormattedTime() {
+            const minutes = Math.floor(this.promoTimeRemaining / 60);
+            const seconds = this.promoTimeRemaining % 60;
+            return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        },
         progressBarWidth() {
             const percentage = (this.timeRemaining / this.totalTime) * 100;
             return `${percentage}%`;
@@ -548,6 +568,21 @@ export default {
     },
     
     methods: {
+        startPromoTimer() {
+            const userId = useAuthStore().user?.id || 'guest';
+            const key = `first-deposit-promo-expires-${userId}`;
+            let deadline = Number(localStorage.getItem(key));
+            if (!deadline) {
+                deadline = Date.now() + (30 * 60 * 1000);
+                localStorage.setItem(key, String(deadline));
+            }
+            const tick = () => {
+                this.promoTimeRemaining = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
+                if (this.promoTimeRemaining === 0) clearInterval(this.promoInterval);
+            };
+            tick();
+            this.promoInterval = setInterval(tick, 1000);
+        },
         refreshPage() {
             window.location.reload();
         },
@@ -944,6 +979,12 @@ export default {
     },
 
     mounted() {
+        this.startPromoTimer();
+        const promoAmount = Number(localStorage.getItem('first-deposit-promo-amount'));
+        if (promoAmount) {
+            this.setAmount(promoAmount);
+            localStorage.removeItem('first-deposit-promo-amount');
+        }
         this.intervalId = setInterval(this.updateTimer, 1000);
         if (this.setting) {
             // Prioridade para WazerPay, sem quebrar os outros
@@ -965,6 +1006,7 @@ export default {
     beforeUnmount() {
         clearInterval(this.intervalId);
         clearInterval(this.timer);
+        clearInterval(this.promoInterval);
         this.paymentType = null;
         
         // ✅ Limpar debug globais

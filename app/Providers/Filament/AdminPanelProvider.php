@@ -92,7 +92,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->navigation(function (NavigationBuilder $builder): NavigationBuilder {
                 return $builder->groups([
-                    auth('web')->user()->hasRole('admin') ?
+                    (auth('web')->user()?->hasRole('admin') ?? false) ?
                         NavigationGroup::make()
                         ->items([
                             NavigationItem::make('dashboard')
@@ -106,25 +106,25 @@ class AdminPanelProvider extends PanelProvider
                                 ->label(fn (): string => 'Configurações')
                                 ->url(fn (): string => SettingResource::getUrl())
                                 ->isActiveWhen(fn () => request()->routeIs('filament.pages.settings'))
-                                ->visible(fn(): bool => auth('web')->user()->hasRole('admin')),
+                                ->visible(fn(): bool => (auth('web')->user()?->hasRole('admin') ?? false)),
                           
                             NavigationItem::make('help')
                                 ->icon('heroicon-o-chat-bubble-left-ellipsis')
                                 ->label(fn (): string => 'Precisa de Ajuda?')
                                 ->url(fn (): string => HelpPage::getUrl())
                                 ->isActiveWhen(fn () => request()->routeIs('filament.help-page'))
-                                ->visible(fn(): bool => auth('web')->user()->hasRole('admin')),
+                                ->visible(fn(): bool => (auth('web')->user()?->hasRole('admin') ?? false)),
 
                             NavigationItem::make('withdraw_affiliates')
                                 ->icon('heroicon-o-banknotes')
                                 ->label(fn (): string => 'Saques de Afiliados')
                                 ->url(fn (): string => AffiliateWithdrawResource::getUrl())
                                 ->isActiveWhen(fn () => request()->routeIs('filament.admin.resources.sub-affiliates.index'))
-                                ->visible(fn(): bool => auth()->user()->hasRole('admin')),
+                                ->visible(fn(): bool => (auth()->user()?->hasRole('admin') ?? false)),
 
                         ]) : NavigationGroup::make()
                     ,
-                     auth('web')->user()?->hasRole('admin') ?
+                     (auth('web')->user()?->hasRole('admin') ?? false) ?
                         NavigationGroup::make('Integrações')
                             ->items([
                               NavigationItem::make('facebook-ads')
@@ -132,28 +132,28 @@ class AdminPanelProvider extends PanelProvider
                                   ->label(fn (): string => 'Trackeamento Facebook Ads')
                                   ->url(fn (): string => FacebookAdsPage::getUrl())
                                   ->isActiveWhen(fn () => request()->routeIs('filament.pages.facebook-ads-page'))
-                                  ->visible(fn(): bool => auth('web')->user()->hasRole('admin')),
+                                  ->visible(fn(): bool => (auth('web')->user()?->hasRole('admin') ?? false)),
                               
                                 NavigationItem::make('gateway')
                                     ->icon('heroicon-o-cog-6-tooth')
                                     ->label(fn (): string => 'Gateway de Pagamentos')
                                     ->url(fn (): string => GatewayPage::getUrl())
                                     ->isActiveWhen(fn () => request()->routeIs('filament.pages.gateway-page'))
-                                    ->visible(fn(): bool => auth('web')->user()->hasRole('admin')),
+                                    ->visible(fn(): bool => (auth('web')->user()?->hasRole('admin') ?? false)),
 
                               /*NavigationItem::make('games-key')
                                   ->icon('heroicon-o-puzzle-piece')
                                   ->label(fn (): string => 'Provedores de Jogos ')
                                   ->url(fn (): string => GamesKeyPage::getUrl())
                                   ->isActiveWhen(fn () => request()->routeIs('filament.pages.games-key-page'))
-                                  ->visible(fn(): bool => auth('web')->user()->hasRole('admin')),*/
+                                  ->visible(fn(): bool => (auth('web')->user()?->hasRole('admin') ?? false)),*/
                               
                             NavigationItem::make('setting-mail')
                                 ->icon('heroicon-o-cog-6-tooth')
                                 ->label(fn (): string => 'Definições de Email')
                                 ->url(fn (): string => SettingMailPage::getUrl())
                                 ->isActiveWhen(fn () => request()->routeIs('filament.pages.setting-mail-page'))
-                                ->visible(fn(): bool => auth('web')->user()->hasRole('admin')),
+                                ->visible(fn(): bool => (auth('web')->user()?->hasRole('admin') ?? false)),
 
                               
                               NavigationItem::make('consulta-cpf')
@@ -161,13 +161,13 @@ class AdminPanelProvider extends PanelProvider
                                   ->label(fn (): string => 'Consulta de Dados')
                                   ->url(fn (): string => ConsultDataPage::getUrl())
                                   ->isActiveWhen(fn () => request()->routeIs('filament.pages.consult-data-page'))
-                                  ->visible(fn(): bool => auth('web')->user()->hasRole('admin')),
+                                  ->visible(fn(): bool => (auth('web')->user()?->hasRole('admin') ?? false)),
                               
                               
                             ])
                         : NavigationGroup::make()
                     ,
-					auth('web')->user()->hasRole('admin') ?
+					(auth('web')->user()?->hasRole('admin') ?? false) ?
                         NavigationGroup::make('Customização')
                             ->items([
                                 
@@ -177,12 +177,12 @@ class AdminPanelProvider extends PanelProvider
                                     ->label(fn (): string => 'Cores e Estilos')
                                     ->url(fn (): string => LayoutCssCustom::getUrl())
                                     ->isActiveWhen(fn () => request()->routeIs('filament.pages.layout-css-custom'))
-                                    ->visible(fn(): bool => auth('web')->user()->hasRole('admin')),
+                                    ->visible(fn(): bool => (auth('web')->user()?->hasRole('admin') ?? false)),
                               ...BannerResource::getNavigationItems()
                             ])
                         : NavigationGroup::make()
                     ,
-                    auth('web')->user()->hasRole('admin') ?
+                    (auth('web')->user()?->hasRole('admin') ?? false) ?
                         NavigationGroup::make('Funcionalidades')
                             ->items([
                                 ...MissionResource::getNavigationItems(),
@@ -191,7 +191,7 @@ class AdminPanelProvider extends PanelProvider
                             ])
                         : NavigationGroup::make()
                     ,
-                    auth('web')->user()->hasRole('admin') ?
+                    (auth('web')->user()?->hasRole('admin') ?? false) ?
                         NavigationGroup::make('Meus Jogos')
                             ->items([
                                 ...CategoryResource::getNavigationItems(),
@@ -201,7 +201,7 @@ class AdminPanelProvider extends PanelProvider
                             ])
                         : NavigationGroup::make()
                     ,
-                    auth('web')->user()->hasRole('admin') ?
+                    (auth('web')->user()?->hasRole('admin') ?? false) ?
                         NavigationGroup::make('Administração')
                             ->items([
                                 ...UserResource::getNavigationItems(),
@@ -212,7 +212,7 @@ class AdminPanelProvider extends PanelProvider
                         : NavigationGroup::make()
                     ,
 
-                    auth('web')->user()->hasRole('admin') ?
+                    (auth('web')->user()?->hasRole('admin') ?? false) ?
                         NavigationGroup::make(__(config('filament-spatie-roles-permissions.navigation_section_group', 'filament-spatie-roles-permissions::filament-spatie.section.roles_and_permissions')))
                             ->items([
                                 NavigationItem::make(__('filament-spatie-roles-permissions::filament-spatie.section.role'))

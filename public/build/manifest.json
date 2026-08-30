@@ -1,6 +1,6 @@
 {
-  "_init-BgBbUTWT.js": {
-    "file": "assets/init-BgBbUTWT.js",
+  "_init-xZTIL0J7.js": {
+    "file": "assets/init-xZTIL0J7.js",
     "name": "init",
     "imports": [
       "resources/js/app.js"
@@ -63,22 +63,22 @@
     "isDynamicEntry": true
   },
   "node_modules/pixi.js/lib/environment-browser/browserAll.mjs": {
-    "file": "assets/browserAll-Ou9v7EAN.js",
+    "file": "assets/browserAll-B8nc0dHN.js",
     "name": "browserAll",
     "src": "node_modules/pixi.js/lib/environment-browser/browserAll.mjs",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/app.js",
-      "_init-BgBbUTWT.js"
+      "_init-xZTIL0J7.js"
     ]
   },
   "node_modules/pixi.js/lib/environment-webworker/webworkerAll.mjs": {
-    "file": "assets/webworkerAll-apqG-ZYw.js",
+    "file": "assets/webworkerAll-B_s_8U1Q.js",
     "name": "webworkerAll",
     "src": "node_modules/pixi.js/lib/environment-webworker/webworkerAll.mjs",
     "isDynamicEntry": true,
     "imports": [
-      "_init-BgBbUTWT.js",
+      "_init-xZTIL0J7.js",
       "resources/js/app.js"
     ]
   },
@@ -93,7 +93,7 @@
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-CvDDJFPZ.js",
+    "file": "assets/app-B0urbCYN.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
@@ -108,7 +108,7 @@
       "lang/pt_BR.json"
     ],
     "css": [
-      "assets/app-B1d-HR3i.css"
+      "assets/app-CgUxGZAI.css"
     ],
     "assets": [
       "assets/trofeu-k7kuguoC.webp",
