@@ -15,7 +15,7 @@
                     @click.stop
                 >
                     <div class="game-search-toolbar">
-                        <label class="game-search-input-wrap">
+                        <div class="game-search-input-wrap">
                             <svg aria-hidden="true" viewBox="0 0 24 24" class="game-search-icon">
                                 <circle cx="10.8" cy="10.8" r="6.8" />
                                 <path d="m16 16 5 5" />
@@ -27,8 +27,8 @@
                                 autocomplete="off"
                                 autocapitalize="off"
                                 spellcheck="false"
-                                :aria-label="$t('Search games')"
-                                :placeholder="$t('Search for a casino game')"
+                                aria-label="Pesquisar jogos"
+                                placeholder="Pesquise jogos de cassino"
                                 @input="onSearchInput"
                             >
                             <button
@@ -37,13 +37,13 @@
                                 class="game-search-clear"
                                 @click="clearSearch"
                             >
-                                {{ $t('Clear') }}
+                                Limpar
                             </button>
                         </label>
                         <button
                             type="button"
                             class="game-search-close"
-                            :aria-label="$t('Close search')"
+                            aria-label="Fechar pesquisa"
                             @click="close"
                         >
                             <svg aria-hidden="true" viewBox="0 0 24 24">
@@ -53,7 +53,7 @@
                     </div>
 
                     <div class="game-search-tabs">
-                        <span class="game-search-tab game-search-tab-active">{{ $t('Casino') }}</span>
+                        <span class="game-search-tab game-search-tab-active">Cassino</span>
                     </div>
 
                     <div class="game-search-content">
@@ -61,15 +61,15 @@
                             <h2 id="game-search-title">
                                 {{ searchTerm.trim().length >= minimumCharacters
                                     ? $t('Search results')
-                                    : $t('Games for you') }}
+                                    : 'Jogos para você' }}
                             </h2>
-                            <span v-if="searching" class="game-search-loading-label" aria-live="polite">
-                                {{ $t('Searching') }}
+                            <span v-if="searching || (loadingSuggestions && searchTerm.trim().length < minimumCharacters)" class="game-search-loading-label" aria-live="polite">
+                                Buscando...
                             </span>
                         </div>
 
                         <p v-if="searchTerm.trim().length < minimumCharacters" class="game-search-hint">
-                            {{ $t('Type at least 3 characters to search games.') }}
+                            Digite pelo menos 3 caracteres para pesquisar.
                         </p>
 
                         <div
@@ -98,11 +98,11 @@
 
                         <div v-else-if="searchTerm.trim().length >= minimumCharacters" class="game-search-empty" role="status">
                             <p v-if="searchError">{{ searchError }}</p>
-                            <p v-else>{{ $t('No games found for this search.') }}</p>
+                            <p v-else>Nenhum jogo encontrado para esta busca.</p>
                         </div>
 
                         <div v-else class="game-search-empty game-search-empty-muted">
-                            {{ $t('Popular games will appear here.') }}
+                            Carregando jogos sugeridos...
                         </div>
                     </div>
                 </section>
@@ -120,16 +120,15 @@ export default {
     name: "GameSearchOverlay",
     components: { CassinoGameCard },
     props: {
-        suggestedGames: {
-            type: Array,
-            default: () => [],
-        },
     },
     data() {
         return {
             minimumCharacters: 3,
             searchTerm: "",
             results: [],
+            suggestedGames: [],
+            loadingSuggestions: false,
+            suggestionsLoaded: false,
             searching: false,
             searchError: "",
             debounceTimer: null,
@@ -147,7 +146,7 @@ export default {
         visibleGames() {
             return this.searchTerm.trim().length >= this.minimumCharacters
                 ? this.results
-                : this.suggestedGames.slice(0, 14);
+                : this.suggestedGames;
         },
     },
     watch: {
@@ -157,6 +156,7 @@ export default {
                 document.body.style.overflow = "hidden";
                 document.addEventListener("keydown", this.onGlobalKeydown);
                 this.$nextTick(() => this.$refs.searchInput?.focus());
+                if (!this.suggestionsLoaded) this.loadSuggestions();
             } else {
                 this.restorePageScroll();
                 this.resetSearch();
@@ -172,6 +172,30 @@ export default {
         }
     },
     methods: {
+        async loadSuggestions() {
+            this.loadingSuggestions = true;
+
+            try {
+                const response = await HttpApi.get("games/all");
+                const providers = response.data?.providers ?? [];
+                const seen = new Set();
+
+                this.suggestedGames = providers
+                    .flatMap((provider) => provider.games ?? [])
+                    .filter((game) => {
+                        const id = String(game.id ?? game.game_code ?? "");
+                        if (!game.status || !id || seen.has(id)) return false;
+                        seen.add(id);
+                        return true;
+                    })
+                    .slice(0, 14);
+            } catch (error) {
+                this.suggestedGames = [];
+            } finally {
+                this.suggestionsLoaded = true;
+                this.loadingSuggestions = false;
+            }
+        },
         onGlobalKeydown(event) {
             if (event.key === "Escape") this.close();
         },
@@ -219,7 +243,7 @@ export default {
                 this.results = response.data?.games ?? [];
             } catch (error) {
                 if (requestSequence !== this.requestSequence) return;
-                this.searchError = this.$t("Could not load games. Please try again.");
+                this.searchError = "Não foi possível carregar os jogos. Tente novamente.";
                 this.results = [];
             } finally {
                 if (requestSequence === this.requestSequence) {
@@ -283,14 +307,23 @@ export default {
     stroke: #a6c0cd;
     stroke-width: 2;
 }
-.game-search-input-wrap input {
+.game-search-input-wrap input[type="search"] {
     width: 100%;
     min-width: 0;
-    border: 0;
-    outline: 0;
+    min-height: 0;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    outline: 0 !important;
+    box-shadow: none !important;
     color: white;
-    background: transparent;
+    background: transparent !important;
+    appearance: none;
+    -webkit-appearance: none;
     font-size: 16px;
+}
+.game-search-input-wrap input[type="search"]::-webkit-search-cancel-button {
+    display: none;
 }
 .game-search-input-wrap input::placeholder {
     color: #a6b7c0;
