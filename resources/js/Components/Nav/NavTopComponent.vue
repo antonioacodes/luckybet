@@ -2198,6 +2198,7 @@ export default {
           _this.isLoadingProfile = false;
         });
     },
+  },
   async created() {
     this.getVips();
     this.checkBannerStatus();
