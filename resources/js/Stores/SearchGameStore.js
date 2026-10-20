@@ -8,6 +8,12 @@ export const searchGameStore = defineStore('seachgames', {
     },
 
     actions: {
+        openSearch() {
+            this.searchgameStatus = true;
+        },
+        closeSearch() {
+            this.searchgameStatus = false;
+        },
         setSearchGameToogle() {
             this.searchgameStatus = !this.searchgameStatus;
         },
