@@ -45,13 +45,43 @@ public function show(Request $request)
     return response()->json(['error' => 'Game provider not supported'], 422);
 }
 
+    private function configuredGameDistribution(): ?string
+    {
+        $keys = GamesKey::first();
+
+        if ($keys && $keys->playfiver_code && $keys->playfiver_token && $keys->playfiver_secret) {
+            return 'playfiver';
+        }
+
+        if ($keys && $keys->igamingplay_token && $keys->igamingplay_callback_token) {
+            return 'igamingplay';
+        }
+
+        return null;
+    }
+
     public function featured()
     {
-        $featured_games = Game::with(['provider'])
-            ->where('is_featured', 1)
+        $distribution = $this->configuredGameDistribution();
+
+        if (!$distribution) {
+            return response()->json(['featured_games' => []]);
+        }
+
+        $providers = Provider::query()
             ->where('status', 1)
+            ->where('distribution', $distribution)
+            ->whereHas('featuredGames', fn ($query) => $query->where('distribution', $distribution))
+            ->with(['featuredGames' => function ($query) use ($distribution) {
+                $query->where('distribution', $distribution)->limit(8);
+            }])
             ->get();
-        return response()->json(['featured_games' => $featured_games]);
+
+        $featuredGames = $providers->flatMap(function ($provider) {
+            return $provider->featuredGames->each(fn ($game) => $game->setAppends([]));
+        })->values();
+
+        return response()->json(['featured_games' => $featuredGames]);
     }
     /**
      * 🎰 MÉTODO ESPECÍFICO PARA iGAMINGPLAY
@@ -90,13 +120,27 @@ public function getGameById($id)
      */
     public function index()
     {
-        $providers = Provider::with(['games', 'games.provider'])
-            ->whereHas('games')
-            ->orderBy('name', 'desc')
+        $distribution = $this->configuredGameDistribution();
+
+        if (!$distribution) {
+            return response()->json(['providers' => []]);
+        }
+
+        $providers = Provider::query()
             ->where('status', 1)
+            ->where('distribution', $distribution)
+            ->whereHas('games', fn ($query) => $query->where('distribution', $distribution))
+            ->with(['games' => function ($query) use ($distribution) {
+                $query->where('distribution', $distribution)->limit(8);
+            }])
+            ->orderBy('name', 'desc')
             ->get();
 
-        return response()->json(['providers' =>$providers]);
+        $providers->each(function ($provider) {
+            $provider->games->each(fn ($game) => $game->setAppends([]));
+        });
+
+        return response()->json(['providers' => $providers]);
     }
   
    public function allGames(Request $request)
