@@ -485,6 +485,7 @@ export default {
             countdownIntervalId: null,
             transactionIntervalId: null,
             isCheckingStatus: false,
+            isCheckingStatus: false,
             isCompleted: false,
             isModalOpen: true,
             isLoading: false,
@@ -614,6 +615,10 @@ export default {
             const _this = this;
             const _toast = useToast();
             
+            // Impede requisições duplicadas durante a geração do QR Code.
+            if (_this.isLoading) return;
+            if (!_this.setting?.bonus_is_enable) _this.deposit.accept_bonus = false;
+
             // Validações básicas
             if(_this.deposit.amount === '' || _this.deposit.amount === undefined) {
                 _toast.error(_this.$t('You need to enter a value'));
@@ -760,6 +765,8 @@ export default {
         checkTransactions: function(idTransaction) {
             const _this = this;
             const _toast = useToast();
+            if (_this.isCheckingStatus || _this.isCompleted) return;
+            _this.isCheckingStatus = true;
 
             HttpApi.post(_this.paymentGateway+'/consult-status-transaction', { idTransaction: idTransaction }).then(response => {
                 
@@ -769,12 +776,17 @@ export default {
                 _this.sendPurchaseEvent(idTransaction);
                 
                 _toast.success('Pedido concluído com sucesso');
+                _this.isCompleted = true;
                 clearInterval(_this.transactionIntervalId);
+                clearInterval(_this.countdownIntervalId);
                 _this.transactionIntervalId = null;
+                _this.countdownIntervalId = null;
                 
             }).catch(error => {
                 // Não exibe erro para o usuário, apenas loga
                 console.log('🔄 Checando status do pagamento...');
+            }).finally(() => {
+                _this.isCheckingStatus = false;
             });
         },
         
