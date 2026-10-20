@@ -39,6 +39,7 @@ export default {
     return {
       provider: null,
       isLoading: true,
+      requestSequence: 0,
       settingsGames: {
         itemsToShow: 2.5,
         snapAlign: "start",
@@ -49,46 +50,38 @@ export default {
       },
     };
   },
-  // REMOVA o mounted() daqui, pois o watcher com immediate: true fará a chamada inicial
-  // async mounted() {
-  //   await this.fetchProviderGames();
-  // },
   watch: {
-    // Adicione este watcher para reagir a mudanças na prop providerId
     providerId: {
-      immediate: true, // Garante que a função seja executada na montagem inicial
-      handler(newProviderId, oldProviderId) {
-        // Só busca os detalhes se o providerId realmente mudou
-        if (newProviderId && newProviderId !== oldProviderId) {
-          console.log(`[ProvidersRelatedGames] Provider ID mudou de ${oldProviderId} para ${newProviderId}. Recarregando jogos.`);
-          this.fetchProviderGames();
-        } else if (newProviderId && !oldProviderId) {
-          // Caso de primeira montagem onde newProviderId é válido e oldProviderId é undefined
-          this.fetchProviderGames();
-        } else if (!newProviderId) {
-          // Se o providerId se tornar nulo ou indefinido, podemos limpar os dados
-          this.provider = null;
-          this.isLoading = false;
-        }
+      immediate: true,
+      handler(newProviderId) {
+        this.fetchProviderGames(newProviderId);
       },
     },
   },
   methods: {
-    async fetchProviderGames() {
-      if (!this.providerId) {
-        this.provider = null; // Limpa dados anteriores se não houver providerId
+    async fetchProviderGames(providerId = this.providerId) {
+      const requestId = ++this.requestSequence;
+      if (!providerId) {
+        this.provider = null;
         this.isLoading = false;
         return;
       }
+
       this.isLoading = true;
       try {
-        const response = await HttpApi.get(`providers/${this.providerId}/games`);
-        this.provider = response.data.provider || {};
-      } catch (err) {
-        console.error("❌ Erro ao carregar os jogos do provedor:", err);
-        this.provider = null; // Limpa o provedor em caso de erro
+        const response = await HttpApi.get(`providers/${providerId}/games`);
+        if (requestId === this.requestSequence) {
+          this.provider = response.data?.provider ?? null;
+        }
+      } catch (error) {
+        if (requestId === this.requestSequence) {
+          console.error("Erro ao carregar os jogos do provedor:", error);
+          this.provider = null;
+        }
       } finally {
-        this.isLoading = false;
+        if (requestId === this.requestSequence) {
+          this.isLoading = false;
+        }
       }
     },
   },
