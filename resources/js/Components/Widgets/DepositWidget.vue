@@ -485,7 +485,6 @@ export default {
             countdownIntervalId: null,
             transactionIntervalId: null,
             isCheckingStatus: false,
-            isCheckingStatus: false,
             isCompleted: false,
             isModalOpen: true,
             isLoading: false,
