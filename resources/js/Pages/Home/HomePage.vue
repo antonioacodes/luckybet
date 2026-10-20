@@ -1376,16 +1376,18 @@ box-shadow: 0px 0px 14px -22px rgba(43,43,43,1);background-color: var(--ci-gray-
         },
         mounted() {
             window.scrollTo(0, 0);
-            window.addEventListener('scroll', () => {
-        const btnScrollTop = document.querySelector('.btn-scroll-top');
-        if (window.scrollY > 100) {
-          btnScrollTop.classList.add('show-btn-scroll-top');
-        } else {
-          btnScrollTop.classList.remove('show-btn-scroll-top');
-        }
-      });
+            window.addEventListener('scroll', this.updateScrollTopButton, { passive: true });
+            this.updateScrollTopButton();
+        },
+        beforeUnmount() {
+            window.removeEventListener('scroll', this.updateScrollTopButton);
         },
         methods: {
+            updateScrollTopButton() {
+                const button = document.querySelector('.btn-scroll-top');
+                if (!button) return;
+                button.classList.toggle('show-btn-scroll-top', window.scrollY > 100);
+            },
          searchGames: async function() {
             if (this.searchTerm.length > 2) {
                 this.getData();
@@ -1403,77 +1405,62 @@ box-shadow: 0px 0px 14px -22px rgba(43,43,43,1);background-color: var(--ci-gray-
         window.scrollTo({ top: 0, behavior: 'smooth' });
       },
             getCasinoCategories: async function () {
-                const _this = this;
-                await HttpApi.get('categories')
-                    .then(response => {
-                        _this.categories = response.data.categories;
-                    })
-                    .catch(error => {
-                        Object.entries(JSON.parse(error.request.responseText)).forEach(([key, value]) => {
-
-                        });
-                    });
+                try {
+                    const response = await HttpApi.get('categories');
+                    this.categories = response.data?.categories ?? [];
+                } catch (error) {
+                    console.error('Erro ao carregar categorias:', error);
+                    this.categories = [];
+                }
             },
             toggleSearch: function () {
                 this.searchGameStore.setSearchGameToogle();
             },
             getBanners: async function () {
-                const _this = this;
                 try {
                     const response = await HttpApi.get('settings/banners');
-                    const allBanners = response.data.banners;
+                    const allBanners = [...(response.data?.banners ?? [])].sort((a, b) => a.id - b.id);
 
-                    // Ordena todos os banners por ID
-                    const sortedBanners = allBanners.sort((a, b) => a.id - b.id);
-
-                    _this.banners = sortedBanners.filter(banner => banner.type === 'carousel');
-                    _this.bannersHome = sortedBanners.filter(banner => banner.type === 'home');
+                    this.banners = allBanners.filter(banner => banner.type === 'carousel');
+                    this.bannersHome = allBanners.filter(banner => banner.type === 'home');
                 } catch (error) {
-                    console.error(error);
-                } finally {
+                    console.error('Erro ao carregar banners:', error);
+                    this.banners = [];
+                    this.bannersHome = [];
                 }
             },
             getAllGames: async function () {
-                const _this = this;
-                return await HttpApi.get('games/all')
-                    .then(async response => {
-                        if (response.data !== undefined) {
-                            _this.providers = response.data.providers;
-                            _this.isLoading = false;
-                            _this.loading = false;
-                        }
-                    })
-                    .catch(error => {
-                        Object.entries(JSON.parse(error.request.responseText)).forEach(([key, value]) => {
-                            console.log(`${value}`);
-                        });
-                        _this.isLoading = false;
-                        _this.loading = false;
-                    });
+                try {
+                    const response = await HttpApi.get('games/all');
+                    this.providers = response.data?.providers ?? [];
+                } catch (error) {
+                    console.error('Erro ao carregar jogos da Home:', error);
+                    this.providers = [];
+                }
             },
             getFeaturedGames: async function () {
-                const _this = this;
-                return await HttpApi.get('featured/games')
-                    .then(async response => {
-
-
-                        _this.featured_games = response.data.featured_games;
-                        _this.isLoading = false;
-                        _this.loading = false;
-                    })
-                    .catch(error => {
-                        Object.entries(JSON.parse(error.request.responseText)).forEach(([key, value]) => {
-                            console.log(`${value}`);
-                        });
-                        _this.isLoading = false;
-                        _this.loading = false;
-                    });
+                try {
+                    const response = await HttpApi.get('featured/games');
+                    this.featured_games = response.data?.featured_games ?? [];
+                } catch (error) {
+                    console.error('Erro ao carregar jogos em destaque:', error);
+                    this.featured_games = [];
+                }
             },
             initializeMethods: async function () {
-                await this.getCasinoCategories();
-                await this.getBanners();
-                await this.getAllGames();
-                await this.getFeaturedGames();
+                this.loading = true;
+                this.isLoading = true;
+                try {
+                    await Promise.all([
+                        this.getCasinoCategories(),
+                        this.getBanners(),
+                        this.getAllGames(),
+                        this.getFeaturedGames()
+                    ]);
+                } finally {
+                    this.loading = false;
+                    this.isLoading = false;
+                }
             },
             onCarouselInit(index) {
 
