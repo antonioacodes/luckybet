@@ -482,7 +482,9 @@ export default {
             showQRCode: false,
             totalTime: 5 * 60,
             timeRemaining: 5 * 60,
-            intervalId: null,
+            countdownIntervalId: null,
+            transactionIntervalId: null,
+            isCheckingStatus: false,
             isCompleted: false,
             isModalOpen: true,
             isLoading: false,
@@ -557,7 +559,10 @@ export default {
                 this.timeRemaining -= 1;
             } else {
                 this.isCompleted = true;
-                clearInterval(this.intervalId);
+                clearInterval(this.countdownIntervalId);
+                clearInterval(this.transactionIntervalId);
+                this.countdownIntervalId = null;
+                this.transactionIntervalId = null;
             }
         },
         
@@ -681,7 +686,12 @@ export default {
                 _this.sendAddToCartEvent();
                 */
                 // ✅ INICIAR VERIFICAÇÃO DE STATUS
-                _this.intervalId = setInterval(function () {
+                _this.timeRemaining = _this.totalTime;
+                _this.isCompleted = false;
+                clearInterval(_this.countdownIntervalId);
+                clearInterval(_this.transactionIntervalId);
+                _this.countdownIntervalId = setInterval(_this.updateTimer, 1000);
+                _this.transactionIntervalId = setInterval(function () {
                     _this.checkTransactions(_this.idTransaction);
                 }, 5000);
 
@@ -759,7 +769,8 @@ export default {
                 _this.sendPurchaseEvent(idTransaction);
                 
                 _toast.success('Pedido concluído com sucesso');
-                clearInterval(_this.intervalId);
+                clearInterval(_this.transactionIntervalId);
+                _this.transactionIntervalId = null;
                 
             }).catch(error => {
                 // Não exibe erro para o usuário, apenas loga
@@ -944,7 +955,7 @@ export default {
     },
 
     mounted() {
-        this.intervalId = setInterval(this.updateTimer, 1000);
+
         if (this.setting) {
             // Prioridade para WazerPay, sem quebrar os outros
             if (this.setting.wazerpay_is_enable) {
@@ -963,7 +974,8 @@ export default {
     },
 
     beforeUnmount() {
-        clearInterval(this.intervalId);
+        clearInterval(this.countdownIntervalId);
+        clearInterval(this.transactionIntervalId);
         clearInterval(this.timer);
         this.paymentType = null;
         
