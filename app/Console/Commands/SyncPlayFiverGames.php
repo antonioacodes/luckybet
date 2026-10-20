@@ -18,6 +18,7 @@ class SyncPlayFiverGames extends Command
         if (!$res->successful() || (int)$res->json('status')!==1) { $this->error('Falha ao listar provedores PlayFivers.'); return self::FAILURE; }
         $count=0;
         foreach ($res->json('data',[]) as $remote) {
+            $homeGames = 0;
             $id=(string)($remote['id'] ?? ''); $name=trim((string)($remote['name'] ?? '')); if (!$id || !$name) continue;
             $provider=Provider::firstOrNew(['code'=>'playfiver:'.$id,'distribution'=>'playfiver']);
             $provider->fill(['name'=>$name,'status'=>(int)($remote['status'] ?? 1),'cover'=>$remote['image_url'] ?? null,'rtp'=>95]); $provider->save();
