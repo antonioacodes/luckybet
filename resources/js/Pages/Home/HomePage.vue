@@ -1339,7 +1339,6 @@ box-shadow: 0px 0px 14px -22px rgba(43,43,43,1);background-color: var(--ci-gray-
                 providers: null,
 
                 featured_games: null,
-                categories: null,
             }
         },
         setup(props) {
@@ -1404,15 +1403,6 @@ box-shadow: 0px 0px 14px -22px rgba(43,43,43,1);background-color: var(--ci-gray-
             scrollToTop() {
         window.scrollTo({ top: 0, behavior: 'smooth' });
       },
-            getCasinoCategories: async function () {
-                try {
-                    const response = await HttpApi.get('categories');
-                    this.categories = response.data?.categories ?? [];
-                } catch (error) {
-                    console.error('Erro ao carregar categorias:', error);
-                    this.categories = [];
-                }
-            },
             toggleSearch: function () {
                 this.searchGameStore.setSearchGameToogle();
             },
@@ -1452,7 +1442,6 @@ box-shadow: 0px 0px 14px -22px rgba(43,43,43,1);background-color: var(--ci-gray-
                 this.isLoading = true;
                 try {
                     await Promise.all([
-                        this.getCasinoCategories(),
                         this.getBanners(),
                         this.getAllGames(),
                         this.getFeaturedGames()
