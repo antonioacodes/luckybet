@@ -49,7 +49,10 @@ public function show(Request $request)
     {
         $keys = GamesKey::first();
 
-        if ($keys && $keys->playfiver_code && $keys->playfiver_token && $keys->playfiver_secret) {
+        // The catalog and launch API require the agent token and secret.
+        // The agent code is used for callback validation, not for selecting
+        // which provider's games should be listed on the Home page.
+        if ($keys && $keys->playfiver_token && $keys->playfiver_secret) {
             return 'playfiver';
         }
 
