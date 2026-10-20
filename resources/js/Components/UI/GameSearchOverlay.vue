@@ -275,10 +275,10 @@ export default {
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--ci-gray-dark);
     border-radius: 14px;
-    color: #f5f7f8;
-    background: #071018;
+    color: var(--title-color);
+    background: var(--ci-gray-over);
     box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
 }
 .game-search-toolbar {
@@ -295,9 +295,9 @@ export default {
     align-items: center;
     gap: 12px;
     padding: 0 14px;
-    border: 1px solid rgba(255, 255, 255, 0.18);
+    border: 1px solid var(--ci-gray-dark);
     border-radius: 9px;
-    background: #0b1720;
+    background: var(--input-primary);
     transition: border-color 160ms ease, box-shadow 160ms ease;
 }
 .game-search-icon {
@@ -305,7 +305,7 @@ export default {
     height: 22px;
     flex: 0 0 auto;
     fill: none;
-    stroke: #9eafb8;
+    stroke: var(--sub-text-color);
     stroke-width: 2;
 }
 .game-search-panel .game-search-toolbar .game-search-input-wrap > input[type="search"] {
@@ -315,18 +315,18 @@ export default {
     width: 100%;
     min-width: 0;
     flex: 1 1 auto;
-    color: #fff;
-    caret-color: #fff;
+    color: var(--title-color);
+    caret-color: var(--ci-primary-color);
     font: inherit;
     font-size: 16px;
     line-height: 1.4;
 }
 .game-search-input-wrap:focus-within {
-    border-color: var(--ci-primary-color, #00bc57);
-    box-shadow: 0 0 0 2px rgba(0, 188, 87, 0.16);
+    border-color: var(--ci-primary-color);
+    box-shadow: 0 0 0 2px var(--ci-primary-opacity-color);
 }
 .game-search-panel .game-search-toolbar .game-search-input-wrap > input[type="search"]::placeholder {
-    color: #a6b7c0;
+    color: var(--sub-text-color);
     opacity: 1;
 }
 .game-search-panel .game-search-toolbar .game-search-input-wrap > input[type="search"]::-webkit-search-cancel-button {
@@ -336,18 +336,18 @@ export default {
 .game-search-close {
     flex: 0 0 auto;
     border: 0;
-    color: #e5edf1;
+    color: var(--title-color);
     background: transparent;
     cursor: pointer;
 }
 .game-search-close:hover {
-    color: var(--ci-primary-color, #00bc57);
+    color: var(--ci-primary-color);
 }
 .game-search-clear {
     padding: 6px 9px;
     border-radius: 5px;
-    color: #e6f5ec;
-    background: rgba(0, 188, 87, 0.18);
+    color: var(--title-color);
+    background: var(--ci-primary-opacity-color);
     font-size: 13px;
 }
 .game-search-close {
@@ -371,15 +371,15 @@ export default {
     min-height: 42px;
     padding: 0 22px;
     border-radius: 22px;
-    color: #dce5e9;
-    background: #101d25;
+    color: var(--sub-text-color);
+    background: var(--input-primary);
     font-size: 14px;
     font-weight: 600;
 }
 .game-search-tab-active {
-    color: #fff;
-    background: rgba(0, 188, 87, 0.16);
-    box-shadow: inset 0 0 0 1px var(--ci-primary-color, #00bc57);
+    color: var(--title-color);
+    background: var(--ci-primary-opacity-color);
+    box-shadow: inset 0 0 0 1px var(--ci-primary-color);
 }
 .game-search-content {
     min-height: 120px;
@@ -402,7 +402,7 @@ export default {
 .game-search-loading-label,
 .game-search-hint,
 .game-search-empty {
-    color: #afc4ce;
+    color: var(--sub-text-color);
     font-size: 14px;
 }
 .game-search-hint {
@@ -428,7 +428,7 @@ export default {
 .game-search-game-name {
     margin: 7px 2px 0;
     overflow: hidden;
-    color: #dce8ed;
+    color: var(--sub-text-color);
     font-size: 12px;
     line-height: 1.35;
     text-overflow: ellipsis;
@@ -441,7 +441,7 @@ export default {
     width: 100%;
     aspect-ratio: 0.72;
     border-radius: 8px;
-    background: linear-gradient(100deg, #14242d 25%, #20343e 40%, #14242d 65%);
+    background: linear-gradient(100deg, var(--ci-gray-dark) 25%, var(--ci-gray-over) 40%, var(--ci-gray-dark) 65%);
     background-size: 200% 100%;
     animation: game-search-shimmer 1.15s ease-in-out infinite;
 }
@@ -450,7 +450,7 @@ export default {
     height: 10px;
     margin: 9px 2px 0;
     border-radius: 6px;
-    background: linear-gradient(100deg, #14242d 25%, #20343e 40%, #14242d 65%);
+    background: linear-gradient(100deg, var(--ci-gray-dark) 25%, var(--ci-gray-over) 40%, var(--ci-gray-dark) 65%);
     background-size: 200% 100%;
     animation: game-search-shimmer 1.15s ease-in-out infinite;
 }
