@@ -101,6 +101,7 @@
             </div>
         </div>
     </div>
+    <GameSearchOverlay />
 </template>
 
 <script>
@@ -114,7 +115,7 @@ import FooterComponent from "@/Components/UI/FooterComponent.vue";
 import BottomNavComponent from "@/Components/Nav/BottomNavComponent.vue";
 import MissionDaily from "@/Pages/Home/Components/MissionDaily.vue";
 import MissionWeekly from "@/Pages/Home/Components/MissionWeekly.vue";
-import {searchGameStore} from "@/Stores/SearchGameStore.js";
+import GameSearchOverlay from "@/Components/UI/GameSearchOverlay.vue";
 import ButtonFloatWidget from "@/Components/Widgets/ButtonFloatWidget.vue";
 import { sidebarStore } from "@/Stores/SideBarStore.js";
 
@@ -127,6 +128,7 @@ export default {
         FooterComponent,
         SideBarComponent,
         NavTopComponent,
+        GameSearchOverlay,
         ButtonFloatWidget,
     },
     data() {
