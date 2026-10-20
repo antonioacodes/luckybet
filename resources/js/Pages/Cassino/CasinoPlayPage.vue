@@ -310,7 +310,7 @@ export default {
             console.log('Carregando jogo nativo (Source)');
             // Não faz nada, o v-if no template cuida de mostrar o componente
         } 
-        else if (gameInfo.distribution === 'igamingplay') {
+        else if (['igamingplay', 'playfiver'].includes(gameInfo.distribution)) {
             const launchData = await this.launchGame(gameInfo.id);
             this.gameUrl = launchData.game_url?.replace(/&/g, '&');
         }
