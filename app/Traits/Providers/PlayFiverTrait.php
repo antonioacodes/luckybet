@@ -72,7 +72,8 @@ trait PlayFiverTrait
             if ($duplicate) return response()->json(['balance'=>(float)($wallet->balance+$wallet->balance_withdrawal+$wallet->balance_bonus),'msg'=>'SUCCESS']);
             $round=(string)($slot['round_id'] ?? '');
             if ($type==='REFUND') {
-                $betOrder=Order::where('user_id',$user->id)->where('type','bet')->where('round_id',$round)->where('refunded',0)->lockForUpdate()->first();
+                $betOrder=Order::where('user_id',$user->id)->where('type','bet')->where('transaction_id',$txn.':debit')->where('refunded',0)->lockForUpdate()->first();
+                if (!$betOrder) $betOrder=Order::where('user_id',$user->id)->where('type','bet')->where('round_id',$round)->where('refunded',0)->lockForUpdate()->first();
                 if (!$betOrder) return response()->json(['balance'=>(float)($wallet->balance+$wallet->balance_withdrawal+$wallet->balance_bonus),'msg'=>'TRANSACTION_NOT_FOUND'],404);
                 $amount=abs((float)$betOrder->amount); $wallet->balance_withdrawal+=$amount; $wallet->save(); $betOrder->refunded=1; $betOrder->save();
                 Order::create(['user_id'=>$user->id,'transaction_id'=>$txn,'game'=>$slot['game_code'] ?? 'PlayFiver','game_uuid'=>$slot['game_code'] ?? '','type'=>'refund','type_money'=>'balance_withdrawal','amount'=>$amount,'providers'=>'playfiver','refunded'=>1,'status'=>1,'round_id'=>$round]);
@@ -85,10 +86,12 @@ trait PlayFiverTrait
                     $typeMoney=Core::DiscountBalance($wallet,$bet);
                     if ($typeMoney==='no_balance') return response()->json(['balance'=>(float)($wallet->balance+$wallet->balance_withdrawal+$wallet->balance_bonus),'msg'=>'INSUFFICIENT_USER_FUNDS'],400);
                     Order::create(['user_id'=>$user->id,'transaction_id'=>$txn.':debit','game'=>$slot['game_code'] ?? 'PlayFiver','game_uuid'=>$slot['game_code'] ?? '','type'=>'bet','type_money'=>$typeMoney,'amount'=>$bet,'providers'=>'playfiver','status'=>1,'round_id'=>$round]);
+                    Core::generateGameHistory($user->id, 'bet', 0, $bet, $typeMoney, $txn);
                 }
                 if ($win>0) {
                     $wallet->refresh(); $wallet->balance_withdrawal+=$win; $wallet->save();
                     Order::create(['user_id'=>$user->id,'transaction_id'=>$txn.':credit','game'=>$slot['game_code'] ?? 'PlayFiver','game_uuid'=>$slot['game_code'] ?? '','type'=>'win','type_money'=>'balance_withdrawal','amount'=>$win,'providers'=>'playfiver','status'=>1,'round_id'=>$round]);
+                    Core::generateGameHistory($user->id, 'win', $win, 0, 'balance_withdrawal', $txn);
                 }
             }
             $wallet->refresh();
