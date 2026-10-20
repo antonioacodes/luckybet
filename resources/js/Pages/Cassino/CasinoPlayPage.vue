@@ -50,7 +50,7 @@
             <p style="text-transform: capitalize;font-weight: bold;">{{ game.game_name }}</p>
           </div>
           <div>
-            <p>{{ game?.provider.name }}</p>
+            <p>{{ game?.provider?.name }}</p>
           </div>
         </div>
         <div class="text-gray-500 flex items-center gap-3">
@@ -156,8 +156,6 @@
 <script>
 import GameRewardBanner from "@/Components/UI/GameRewardBanner.vue";
 import HttpApi from "@/Services/HttpApi.js";
-import { useRoute } from "vue-router";
-import { Tabs } from "flowbite";
 import ProvidersRelatedGames from "@/Pages/Home/Components/ProvidersRelatedGames.vue";
 import LoadingComponent from "@/Components/UI/LoadingComponent.vue";
 import GameLayout from "@/Layouts/GameLayout.vue";
@@ -195,7 +193,8 @@ export default {
       gameUrl: null,
       token: null,
       gameId: null,
-      undermaintenance: false
+      undermaintenance: false,
+      loadRequestId: 0
     };
   },
   methods: {
@@ -290,37 +289,49 @@ export default {
     },
     // --- AQUI ESTAVA O ERRO: Removi o "methods: {" duplicado ---
     async loadGame(gameId) {
-      const _this = this;
-      _this.isLoading = true;
-      _this.game = null;
-      _this.gameUrl = null;
-      _this.undermaintenance = false;
+      const requestId = ++this.loadRequestId;
+      this.isLoading = true;
+      this.game = null;
+      this.gameUrl = null;
+      this.undermaintenance = false;
+
       if (!gameId) {
-        _this.isLoading = false;
+        this.isLoading = false;
         return;
       }
-      _this.gameId = gameId;
-      try {
-        const gameInfo = await _this.getGameInfo();
-        if (!gameInfo) return;
-        _this.game = gameInfo;
 
-        // Lógica Híbrida
+      this.gameId = gameId;
+      try {
+        const gameInfo = await this.getGameInfo();
+        if (requestId !== this.loadRequestId || !gameInfo) return;
+
+        this.game = gameInfo;
+
         if (gameInfo.distribution === 'source') {
-            console.log('Carregando jogo nativo (Source)');
-            // Não faz nada, o v-if no template cuida de mostrar o componente
-        } 
-        else if (['igamingplay', 'playfiver'].includes(gameInfo.distribution)) {
-            const launchData = await this.launchGame(gameInfo.id);
-            this.gameUrl = launchData.game_url?.replace(/&/g, '&');
+          return;
         }
+
+        if (['igamingplay', 'playfiver'].includes(gameInfo.distribution)) {
+          const launchData = await this.launchGame(gameInfo.id);
+          if (requestId !== this.loadRequestId) return;
+
+          this.gameUrl = launchData?.game_url || null;
+          if (!this.gameUrl) this.undermaintenance = true;
+          return;
+        }
+
+        this.undermaintenance = true;
       } catch (error) {
-        console.error('[CassinoPlayPage] Erro ao carregar jogo', error);
-        _this.undermaintenance = true;
+        if (requestId === this.loadRequestId) {
+          console.error('[CassinoPlayPage] Erro ao carregar jogo', error);
+          this.undermaintenance = true;
+        }
       } finally {
-        _this.isLoading = false;
+        if (requestId === this.loadRequestId) {
+          this.isLoading = false;
+        }
       }
-    },
+    }
     toggleFavorite: function () {
       const _this = this;
       return HttpApi.post('games/favorite/' + _this.game.id, {})
@@ -350,14 +361,8 @@ export default {
     "$route.params.id": {
       immediate: true,
       async handler(newId, oldId) {
-        if (this.isAuthenticated) {
-          if (newId && newId !== oldId) {
-            console.log(`[CassinoPlayPage] ID mudou: ${newId}. Recarregando.`);
-            await this.loadGame(newId);
-          } else if (newId && !oldId) {
-            console.log(`[CassinoPlayPage] Carregando inicial: ${newId}.`);
-            await this.loadGame(newId);
-          }
+        if (this.isAuthenticated && newId && newId !== oldId) {
+          await this.loadGame(newId);
         }
       },
     },
