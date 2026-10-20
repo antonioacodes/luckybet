@@ -7,3 +7,6 @@ Route::post('/playfiver/webhook', [GameController::class, 'webhookPlayFiver']);
 
 
 Route::middleware('auth:api')->post('/playfiver/free-bonus', [GameController::class, 'schedulePlayFiverFreeBonus']);
+
+Route::post('/webhook', [GameController::class, 'webhookPlayFiver']);
+Route::post('/api/webhook', [GameController::class, 'webhookPlayFiver']);
