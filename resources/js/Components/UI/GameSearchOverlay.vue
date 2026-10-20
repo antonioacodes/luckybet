@@ -305,7 +305,7 @@ export default {
     height: 22px;
     flex: 0 0 auto;
     fill: none;
-    stroke: var(--sub-text-color);
+    stroke: var(--title-color);
     stroke-width: 2;
 }
 .game-search-panel .game-search-toolbar .game-search-input-wrap > input[type="search"] {
@@ -326,7 +326,7 @@ export default {
     box-shadow: 0 0 0 2px var(--ci-primary-opacity-color);
 }
 .game-search-panel .game-search-toolbar .game-search-input-wrap > input[type="search"]::placeholder {
-    color: var(--sub-text-color);
+    color: var(--title-color);
     opacity: 1;
 }
 .game-search-panel .game-search-toolbar .game-search-input-wrap > input[type="search"]::-webkit-search-cancel-button {
@@ -371,7 +371,7 @@ export default {
     min-height: 42px;
     padding: 0 22px;
     border-radius: 22px;
-    color: var(--sub-text-color);
+    color: var(--title-color);
     background: var(--input-primary);
     font-size: 14px;
     font-weight: 600;
@@ -402,7 +402,7 @@ export default {
 .game-search-loading-label,
 .game-search-hint,
 .game-search-empty {
-    color: var(--sub-text-color);
+    color: var(--title-color);
     font-size: 14px;
 }
 .game-search-hint {
@@ -428,7 +428,7 @@ export default {
 .game-search-game-name {
     margin: 7px 2px 0;
     overflow: hidden;
-    color: var(--sub-text-color);
+    color: var(--title-color);
     font-size: 12px;
     line-height: 1.35;
     text-overflow: ellipsis;
