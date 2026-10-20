@@ -850,70 +850,7 @@ button {
   <div class="christmas-bar w-full h-2 shadow-md"></div>
  <div class="pascoa-bar w-full h-2 shadow-md"></div> -->
     </div>
-    <transition name="fade">
-      <div style="z-index: 999;background-color:rgba(0, 0, 0, 0.47);
-  backdrop-filter: none;height: 100vh;" v-if="showSearchMenu"
-        class="fixed left-0 right-0 bottom-0 flex items-center justify-center mx-auto w-full">
-        <div @click="toggleSearch" class="absolute inset-0 opacity-50 cursor-pointer"></div>
-
-        <!-- Start searchbar action -->
-
-        <div class="search-menu mx-auto w-full p-4">
-          <a class="login-register-x" @click.prevent="toggleSearch" href="">
-            <div class="x-mark-scale"
-              style="box-shadow: 0px 2px 20px rgba(0, 0, 0, 0.80);background-color: var(--carousel-banners-dark);padding: 7px 13px;border-radius: 5px;max-width: 40px">
-              <i style="color: var(--ci-primary-color);font-weight: bold" class="fa-light fa-x"></i>
-            </div>
-          </a>
-          <div class="mb-5 w-full mx-auto w-full p-4">
-
-            <div class=" mx-auto">
-              <div class="flex flex-col">
-
-                <div class="relative w-full">
-                  <input
-                    style="-webkit-box-shadow: 0px 0px 14px -22px rgba(43,43,43,1);-moz-box-shadow: 0px 0px 14px -22px rgba(43,43,43,1);box-shadow: 0px 0px 14px -22px rgba(43,43,43,1);background-color: var(--ci-gray-dark);border-radius: 3px;font-size: 14px;padding-left: 40px;padding-top: 5px;padding-bottom: 5px;"
-                    type="search" v-model.lazy="searchTerm"
-                    class="block p-2.5 w-full z-20 text-sm text-gray-900 dark:placeholder-gray-400 dark:text-white placeholder-search p-2.5 lg:p-0 search-mobile"
-                    placeholder="Pesquise um nome de cassino..." required>
-
-                  <button v-if="searchTerm.length > 0" @click.prevent="clearData" type="button"
-                    class="absolute end-0 h-full p-2.5 text-sm font-medium text-white">
-
-                  </button>
-                </div>
-                <div class="text-center mt-4 justify-center p-2" style="background-color: #383028;border-radius: 5px;">
-
-                  <h3 style="color: #FF9F43;font-size: .75rem;">Mínimo 3 caracteres</h3>
-
-                </div>
-              </div>
-
-              <div v-if="!isLoadingSearch" class="mt-8 grid grid-cols-4 md:grid-cols-12 gap-4 py-5">
-                <CassinoGameCard v-if="games" v-for="(game, index) in games?.data" :index="index"
-                  :title="game.game_name" :cover="game.cover" :gamecode="game.game_code" :type="game.distribution"
-                  :game="game" />
-              </div>
-              <div v-else
-                class="relative items-center block max-w-sm p-6 bg-white border border-gray-100 rounded-lg shadow-md dark:bg-gray-800 dark:border-gray-800 dark:hover:bg-gray-700">
-                <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white opacity-20">Noteworthy
-                  technology acquisitions 2021</h5>
-                <p class="font-normal text-gray-700 dark:text-gray-400 opacity-20">Here are the biggest enterprise
-                  technology acquisitions of 2021 so far, in reverse chronological order.</p>
-                <div role="status" class="absolute -translate-x-1/2 -translate-y-1/2 top-2/4 left-1/2">
-                  <i class="fa-duotone fa-spinner-third fa-spin"
-                    style="font-size: 45px;--fa-primary-color: var(--ci-primary-color); --fa-secondary-color: #000000;"></i>
-                  <span class="sr-only">Loading...</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- End searchbar action -->
-
-
-      </div>
-    </transition>
+    
 
   </nav>
   <div v-if="showModal" class="modal-overlay" @click="closeModal" style="z-index: 999;background-color:rgba(0, 0, 0, 0.80);
@@ -1505,10 +1442,6 @@ button {
           </button>
         </div>
 
-        <a class="login-register-x" @click.prevent="toggleSearch" href="">
-
-        </a>
-
         <!-- PROFILE BODY -->
         <div v-if="profileUser != null" class="flex flex-col w-full p-4"
           style="background-color: #1C1E22;border-bottom-left-radius: 8px;border-bottom-right-radius: 8px;">
@@ -1601,12 +1534,10 @@ import WalletBalance from "@/Components/UI/WalletBalance.vue";
 import HttpApi from "@/Services/HttpApi.js";
 import MakeDeposit from "@/Components/UI/MakeDeposit.vue";
 import { useSettingStore } from "@/Stores/SettingStore.js";
-import { searchGameStore } from "@/Stores/SearchGameStore.js";
-import CassinoGameCard from "@/Pages/Cassino/Components/CassinoGameCard.vue";
 
 export default {
   props: ['simple', 'hideTopBanner'],
-  components: { CassinoGameCard, MakeDeposit, WalletBalance, LanguageSelector, DropdownDarkLight, RouterLink },
+  components: { MakeDeposit, WalletBalance, LanguageSelector, DropdownDarkLight, RouterLink },
   data() {
     return {
       vipPoints: 0,
@@ -1658,10 +1589,6 @@ export default {
       sumBets: 0,
       totalBets: 0,
       totalEarnings: 0,
-      showSearchMenu: false,
-      games: null,
-      searchTerm: '',
-      isLoadingSearch: true,
     }
   },
   setup(props) {
@@ -1697,13 +1624,6 @@ export default {
       return authStore.isAuth;
     },
 
-    searchGameDataStore() {
-      return searchGameStore();
-    },
-    searchGameMenu() {
-      const search = searchGameStore();
-      return search.getSearchGameStatus;
-    },
     sidebarMenuStore() {
       return sidebarStore();
     },
@@ -2002,9 +1922,6 @@ export default {
         _this.setting = settingData;
       }
     },
-    toggleSearch: function () {
-      this.searchGameDataStore.setSearchGameToogle();
-    },
     redirectSocialTo: function () {
       return '/auth/redirect/google'
     },
@@ -2281,27 +2198,6 @@ export default {
           _this.isLoadingProfile = false;
         });
     },
-    getSearch: async function () {
-      const _this = this;
-
-      await HttpApi.get('/search/games?searchTerm=' + this.searchTerm)
-        .then(response => {
-          _this.games = response.data.games;
-          _this.isLoadingSearch = false;
-        })
-        .catch(error => {
-          const _this = this;
-          Object.entries(JSON.parse(error.request.responseText)).forEach(([key, value]) => {
-
-          });
-          _this.isLoadingSearch = false;
-        });
-    },
-    clearData: async function () {
-      this.searchTerm = '';
-      await this.getSearch();
-    }
-  },
   async created() {
     this.getVips();
     this.checkBannerStatus();
@@ -2320,14 +2216,6 @@ export default {
   watch: {
     sidebarMenu(newVal, oldVal) {
       this.sidebar = newVal;
-    },
-    searchTerm(newValue, oldValue) {
-      this.getSearch();
-    },
-    async searchGameMenu(newValue, oldValue) {
-
-      await this.getSearch();
-      this.showSearchMenu = !this.showSearchMenu;
     },
   },
 };
