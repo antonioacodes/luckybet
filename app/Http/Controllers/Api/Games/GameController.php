@@ -34,7 +34,14 @@ public function show(Request $request)
     $game = Game::with('provider')->where('game_code', $request->game_code)->first();
     if (!$game || !$game->status) return response()->json(['error' => 'Game not found'], 404);
     if ($game->distribution === 'playfiver') return $this->launchGamePlayFiver($game, $user);
-    if ($game->distribution === 'igamingplay') return $this->launchGameIgamingPlay($request);
+    if ($game->distribution === 'igamingplay') {
+        try {
+            return $this->launchGameIgamingPlay($request);
+        } catch (\\Throwable $e) {
+            \\Log::error('Erro ao lançar jogo iGamingPlay', ['error' => $e->getMessage()]);
+            return response()->json(['error' => 'Failed to launch game'], 500);
+        }
+    }
     return response()->json(['error' => 'Game provider not supported'], 422);
 }
 
