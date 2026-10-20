@@ -22,7 +22,7 @@ class AffiliateWithdrawResource extends Resource
      */
     public static function canAccess(): bool
     {
-        return auth()->user()->hasRole('afiliado') || auth()->user()->hasRole('admin');
+        return (auth()->user()?->hasRole('afiliado') ?? false) || (auth()->user()?->hasRole('admin') ?? false);
     }
 
     /**
@@ -30,7 +30,7 @@ class AffiliateWithdrawResource extends Resource
      */
     public static function getNavigationLabel(): string
     {
-        return auth()->user()->hasRole('afiliado') ? 'Meus Saques' : 'Saques de Afiliados';
+        return (auth()->user()?->hasRole('afiliado') ?? false) ? 'Meus Saques' : 'Saques de Afiliados';
     }
 
     /**
@@ -38,7 +38,7 @@ class AffiliateWithdrawResource extends Resource
      */
     public static function getModelLabel(): string
     {
-        return auth()->user()->hasRole('afiliado') ? 'Meus Saques' : 'Saques de Afiliados';
+        return (auth()->user()?->hasRole('afiliado') ?? false) ? 'Meus Saques' : 'Saques de Afiliados';
     }
 
     public static function form(Form $form): Form
@@ -56,7 +56,7 @@ class AffiliateWithdrawResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->query(auth()->user()->hasRole('afiliado') ? AffiliateWithdraw::query()->where('user_id', auth()->id()) : AffiliateWithdraw::query())
+            ->query((auth()->user()?->hasRole('afiliado') ?? false) ? AffiliateWithdraw::query()->where('user_id', auth()->id()) : AffiliateWithdraw::query())
             ->columns([
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Usuário')
