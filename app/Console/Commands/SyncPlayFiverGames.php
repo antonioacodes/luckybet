@@ -29,7 +29,9 @@ class SyncPlayFiverGames extends Command
                 $game=Game::where('game_code',$code)->first();
                 if ($game && $game->distribution!=='playfiver') { $this->warn('Código já usado: '.$code); continue; }
                 $game=$game ?: new Game();
-                $game->fill(['provider_id'=>$provider->id,'game_server_url'=>null,'game_id'=>$code,'game_name'=>$item['name'] ?? $code,'game_code'=>$code,'game_original'=>(bool)($item['original'] ?? false),'game_type'=>'slot','description'=>null,'cover'=>$item['image_url'] ?? '', 'status'=>(bool)($item['status'] ?? false),'technology'=>'html5','has_lobby'=>0,'is_mobile'=>1,'has_freespins'=>(bool)($item['rounds_free'] ?? false),'has_tables'=>0,'only_demo'=>0,'rtp'=>95,'distribution'=>'playfiver','views'=>0,'is_featured'=>false,'show_home'=>$homeGames < 8]); $game->save(); $count++; $homeGames++;
+                $isActive = (bool)($item['status'] ?? false);
+                $showOnHome = $isActive && $homeGames < 8;
+                $game->fill(['provider_id'=>$provider->id,'game_server_url'=>null,'game_id'=>$code,'game_name'=>$item['name'] ?? $code,'game_code'=>$code,'game_original'=>(bool)($item['original'] ?? false),'game_type'=>'slot','description'=>null,'cover'=>$item['image_url'] ?? '', 'status'=>$isActive,'technology'=>'html5','has_lobby'=>0,'is_mobile'=>1,'has_freespins'=>(bool)($item['rounds_free'] ?? false),'has_tables'=>0,'only_demo'=>0,'rtp'=>95,'distribution'=>'playfiver','views'=>0,'is_featured'=>false,'show_home'=>$showOnHome]); $game->save(); $count++; if ($showOnHome) $homeGames++;
             }
         }
         $this->info($count.' jogos sincronizados.'); return self::SUCCESS;
