@@ -15,8 +15,13 @@ class ProviderController extends Controller
     {
         $provider = Provider::with(['games' => function ($query) {
             $query->where('status', 1)
-                  ->orderBy('views', 'desc');
+                  ->orderBy('views', 'desc')
+                  ->limit(12);
         }])->find($id);
+
+        if ($provider) {
+            $provider->games->each(fn ($game) => $game->setAppends([]));
+        }
 
         if (!$provider) {
             return response()->json([
