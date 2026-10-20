@@ -3,6 +3,8 @@
 namespace App\Filament\Admin\Pages;
 
 use App\Models\GamesKey;
+use Illuminate\Support\Facades\Artisan;
+use Throwable;
 use Illuminate\Support\HtmlString;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
@@ -127,6 +129,60 @@ class GamesKeyPage extends Page implements HasForms
             ->statePath('data');
     }
 
+
+    public function syncPlayFiverGames(): void
+    {
+        if (env('APP_DEMO')) {
+            Notification::make()
+                ->title('Atenção')
+                ->body('A sincronização não está disponível na versão demo.')
+                ->danger()
+                ->send();
+            return;
+        }
+
+        $setting = GamesKey::first() ?? new GamesKey();
+        $setting->fill($this->form->getState());
+
+        if (!$setting->playfiver_code || !$setting->playfiver_token || !$setting->playfiver_secret) {
+            Notification::make()
+                ->title('Credenciais incompletas')
+                ->body('Preencha o código, token e chave secreta da PlayFiver antes de sincronizar.')
+                ->danger()
+                ->send();
+            return;
+        }
+
+        $setting->save();
+
+        try {
+            $exitCode = Artisan::call('playfiver:sync-games');
+            $output = trim(Artisan::output());
+
+            if ($exitCode === 0) {
+                Notification::make()
+                    ->title('Jogos sincronizados')
+                    ->body($output ?: 'A sincronização PlayFiver foi concluída.')
+                    ->success()
+                    ->send();
+                return;
+            }
+
+            Notification::make()
+                ->title('Falha na sincronização')
+                ->body($output ?: 'Não foi possível sincronizar os jogos PlayFiver.')
+                ->danger()
+                ->send();
+        } catch (Throwable $exception) {
+            report($exception);
+
+            Notification::make()
+                ->title('Falha na sincronização')
+                ->body('Ocorreu um erro ao sincronizar os jogos PlayFiver.')
+                ->danger()
+                ->send();
+        }
+    }
 
     /**
      * @return void
