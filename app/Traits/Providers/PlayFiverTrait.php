@@ -66,7 +66,10 @@ trait PlayFiverTrait
         return DB::transaction(function() use($user,$slot,$txn,$type) {
             $wallet=Wallet::where('user_id',$user->id)->lockForUpdate()->first();
             if (!$wallet) return response()->json(['balance'=>0,'msg'=>'INVALID_USER'],404);
-            if (Order::where('user_id',$user->id)->whereIn('transaction_id',[$txn,$txn.':debit',$txn.':credit'])->exists()) return response()->json(['balance'=>(float)($wallet->balance+$wallet->balance_withdrawal+$wallet->balance_bonus),'msg'=>'SUCCESS']);
+            $duplicate = $type === 'REFUND'
+                ? Order::where('user_id', $user->id)->where('type', 'refund')->where('transaction_id', $txn)->exists()
+                : Order::where('user_id', $user->id)->whereIn('transaction_id', [$txn . ':debit', $txn . ':credit'])->exists();
+            if ($duplicate) return response()->json(['balance'=>(float)($wallet->balance+$wallet->balance_withdrawal+$wallet->balance_bonus),'msg'=>'SUCCESS']);
             $round=(string)($slot['round_id'] ?? '');
             if ($type==='REFUND') {
                 $betOrder=Order::where('user_id',$user->id)->where('type','bet')->where('round_id',$round)->where('refunded',0)->lockForUpdate()->first();
@@ -74,7 +77,10 @@ trait PlayFiverTrait
                 $amount=abs((float)$betOrder->amount); $wallet->balance_withdrawal+=$amount; $wallet->save(); $betOrder->refunded=1; $betOrder->save();
                 Order::create(['user_id'=>$user->id,'transaction_id'=>$txn,'game'=>$slot['game_code'] ?? 'PlayFiver','game_uuid'=>$slot['game_code'] ?? '','type'=>'refund','type_money'=>'balance_withdrawal','amount'=>$amount,'providers'=>'playfiver','refunded'=>1,'status'=>1,'round_id'=>$round]);
             } else {
-                $bet=data_get($slot,'free_rounds.enable',false) ? 0 : max(0,(float)($slot['bet'] ?? 0)); $win=max(0,(float)($slot['win'] ?? 0));
+                $txnType = strtolower((string) ($slot['txn_type'] ?? 'debit_credit'));
+                $isFreeRound = (bool) data_get($slot, 'free_rounds.enable', false);
+                $bet = ($isFreeRound || in_array($txnType, ['credit', 'bonus'], true)) ? 0 : max(0, (float) ($slot['bet'] ?? 0));
+                $win = $txnType === 'debit' ? 0 : max(0, (float) ($slot['win'] ?? 0));
                 if ($bet>0) {
                     $typeMoney=Core::DiscountBalance($wallet,$bet);
                     if ($typeMoney==='no_balance') return response()->json(['balance'=>(float)($wallet->balance+$wallet->balance_withdrawal+$wallet->balance_bonus),'msg'=>'INSUFFICIENT_USER_FUNDS'],400);
