@@ -25,13 +25,20 @@ class SyncPlayFiverGames extends Command
             if (!$games->successful() || (int)$games->json('status')!==1) { $this->warn('Falha ao carregar '.$name); continue; }
             $homeGames = 0;
             foreach ($games->json('data',[]) as $item) {
-                $code=trim((string)($item['game_code'] ?? '')); if (!$code) continue;
-                $game=Game::where('game_code',$code)->first();
-                if ($game && $game->distribution!=='playfiver') { $this->warn('Código já usado: '.$code); continue; }
-                $game=$game ?: new Game();
+                $remoteCode=trim((string)($item['game_code'] ?? '')); if (!$remoteCode) continue;
+
+                // Keep PlayFiver's remote code in game_id for API launch requests.
+                // game_code is the local route identifier and must not collide with
+                // another provider's code (especially the legacy iGamingPlay catalog).
+                $localCode='pf_'.$provider->id.'_'.substr(hash('sha256',$remoteCode),0,32);
+                $game=Game::firstOrNew([
+                    'provider_id'=>$provider->id,
+                    'distribution'=>'playfiver',
+                    'game_id'=>$remoteCode,
+                ]);
                 $isActive = (bool)($item['status'] ?? false);
                 $showOnHome = $isActive && $homeGames < 8;
-                $game->fill(['provider_id'=>$provider->id,'game_server_url'=>null,'game_id'=>$code,'game_name'=>$item['name'] ?? $code,'game_code'=>$code,'game_original'=>(bool)($item['original'] ?? false),'game_type'=>'slot','description'=>null,'cover'=>$item['image_url'] ?? '', 'status'=>$isActive,'technology'=>'html5','has_lobby'=>0,'is_mobile'=>1,'has_freespins'=>(bool)($item['rounds_free'] ?? false),'has_tables'=>0,'only_demo'=>0,'rtp'=>95,'distribution'=>'playfiver','views'=>0,'is_featured'=>false,'show_home'=>$showOnHome]); $game->save(); $count++; if ($showOnHome) $homeGames++;
+                $game->fill(['provider_id'=>$provider->id,'game_server_url'=>null,'game_id'=>$remoteCode,'game_name'=>$item['name'] ?? $remoteCode,'game_code'=>$localCode,'game_original'=>(bool)($item['original'] ?? false),'game_type'=>'slot','description'=>null,'cover'=>$item['image_url'] ?? '', 'status'=>$isActive,'technology'=>'html5','has_lobby'=>0,'is_mobile'=>1,'has_freespins'=>(bool)($item['rounds_free'] ?? false),'has_tables'=>0,'only_demo'=>0,'rtp'=>95,'distribution'=>'playfiver','views'=>0,'is_featured'=>false,'show_home'=>$showOnHome]); $game->save(); $count++; if ($showOnHome) $homeGames++;
             }
         }
         $this->info($count.' jogos sincronizados.'); return self::SUCCESS;
