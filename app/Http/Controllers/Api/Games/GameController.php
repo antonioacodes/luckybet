@@ -37,8 +37,8 @@ public function show(Request $request)
     if ($game->distribution === 'igamingplay') {
         try {
             return $this->launchGameIgamingPlay($request);
-        } catch (\\Throwable $e) {
-            \\Log::error('Erro ao lançar jogo iGamingPlay', ['error' => $e->getMessage()]);
+        } catch (\Throwable $e) {
+            \Log::error('Erro ao lançar jogo iGamingPlay', ['error' => $e->getMessage()]);
             return response()->json(['error' => 'Failed to launch game'], 500);
         }
     }
