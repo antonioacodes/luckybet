@@ -156,6 +156,7 @@
 <script>
 import GameRewardBanner from "@/Components/UI/GameRewardBanner.vue";
 import HttpApi from "@/Services/HttpApi.js";
+import { Tabs } from "flowbite";
 import ProvidersRelatedGames from "@/Pages/Home/Components/ProvidersRelatedGames.vue";
 import LoadingComponent from "@/Components/UI/LoadingComponent.vue";
 import GameLayout from "@/Layouts/GameLayout.vue";
