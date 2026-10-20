@@ -13,11 +13,12 @@ use App\Models\Wallet;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Traits\Providers\iGamingplayTrait;
+use App\Traits\Providers\PlayFiverTrait;
 
 class GameController extends Controller
 {
     // 🔥 USAR TODAS AS TRAITS
-    use iGamingplayTrait;
+    use iGamingplayTrait, PlayFiverTrait;
 
     /**
      * 🎮 LANÇAR JOGO (método principal chamado pelo frontend)
@@ -27,43 +28,14 @@ class GameController extends Controller
      */
 public function show(Request $request)
 {
-    $request->validate([
-        'game_code' => 'required|string'
-    ]);
-
+    $request->validate(['game_code' => 'required|string']);
     $user = Auth::guard('api')->user();
-    if (!$user) {
-        return response()->json(['error' => 'Unauthenticated'], 401);
-    }
-
-    $gameCode = $request->input('game_code');
-    
-    // Busca o jogo no banco
-    $game = Game::where('game_code', $gameCode)
-                ->where('distribution', 'igamingplay')
-                ->first();
-
-    if (!$game) {
-        return response()->json([
-            'error' => 'Game not found',
-            'message' => "Jogo '{$gameCode}' não encontrado para iGamingPlay"
-        ], 404);
-    }
-
-    // 🔥 CHAMA A TRAIT PASSANDO O REQUEST (não o $game)
-    try {
-        return $this->launchGameIgamingPlay($request);
-    } catch (\Exception $e) {
-        \Log::error('Erro ao lançar jogo iGamingPlay', [
-            'error' => $e->getMessage(),
-            'trace' => $e->getTraceAsString()
-        ]);
-        
-        return response()->json([
-            'error' => 'Failed to launch game',
-            'message' => $e->getMessage()
-        ], 500);
-    }
+    if (!$user) return response()->json(['error' => 'Unauthenticated'], 401);
+    $game = Game::with('provider')->where('game_code', $request->game_code)->first();
+    if (!$game || !$game->status) return response()->json(['error' => 'Game not found'], 404);
+    if ($game->distribution === 'playfiver') return $this->launchGamePlayFiver($game, $user);
+    if ($game->distribution === 'igamingplay') return $this->launchGameIgamingPlay($request);
+    return response()->json(['error' => 'Game provider not supported'], 422);
 }
 
     public function featured()

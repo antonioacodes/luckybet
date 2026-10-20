@@ -60,6 +60,14 @@ class GamesKeyPage extends Page implements HasForms
     {
         return $form
                   ->schema([
+                Section::make('PlayFiver v2')
+                    ->description('Credenciais para consultar jogos e iniciar sessões da API PlayFivers.')
+                    ->schema([
+                        TextInput::make('playfiver_url')->label('URL da API')->default('https://api.playfivers.com')->url()->maxLength(191),
+                        TextInput::make('playfiver_code')->label('Código do agente')->maxLength(191),
+                        TextInput::make('playfiver_token')->label('Token do agente')->password()->revealable()->maxLength(191),
+                        TextInput::make('playfiver_secret')->label('Chave secreta')->password()->revealable()->maxLength(191),
+                    ])->columns(2),
                 Section::make('iGamingplay Slots')
                               ->description(new HtmlString('
                     <div style="color:#94a3b8; font-size: .875rem; line-height: 1.25rem; display: flex; align-items: center;">

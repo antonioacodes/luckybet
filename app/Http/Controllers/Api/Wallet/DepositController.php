@@ -33,6 +33,9 @@ class DepositController extends Controller
   
   	public function submitPayment(Request $request)
     {
+        $setting = \\Helper::getSetting();
+        $request->merge(['accept_bonus' => (bool) ($setting?->bonus_is_enable) && $request->boolean('accept_bonus')]);
+
         \Log::info($request->gateway);
         switch ($request->gateway) {
             case 'digitopay':

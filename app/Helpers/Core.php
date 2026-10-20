@@ -995,6 +995,7 @@ private static function PayWin($user, $affiliate, $type, $amount, $changeBonus)
                 'disable_spin',
                 'disable_rollover',
               	'bonus_is_enable',
+                'free_rounds_enabled',
             )->first();
 
             Cache::put('setting', $setting);

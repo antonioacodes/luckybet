@@ -108,6 +108,7 @@ class BonusSetting extends Page implements HasForms
                             ->inline(false)
                             ->label('Ativar/Desativar Bônus de Depósito')
                       		->helperText('Caso ativado, a opção de ativar Bônus de Depósito(100%) aparecerá no modal, se desativado ela some do modal.'),
+                        Toggle::make('free_rounds_enabled')->label('Ativar/Desativar Rodadas Grátis')->helperText('Desative para bloquear novos bônus de rodadas grátis solicitados pela plataforma.'),
                         Toggle::make('activate_vip_bonus')
                             ->inline(false)
                             ->label('Ativar/Desativar Sistema Vip e Bônus')

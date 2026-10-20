@@ -31,6 +31,7 @@ class Provider extends Model
         'rtp',
         'status',
         'distribution',
+        'cover',
         'views',
     ];
 

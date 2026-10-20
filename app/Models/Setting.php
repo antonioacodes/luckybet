@@ -54,6 +54,7 @@ class Setting extends Model
       
       	//Bonus
       	'bonus_is_enable',
+        'free_rounds_enabled',
 
         // Percent
         'ngr_percent',

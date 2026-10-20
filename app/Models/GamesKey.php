@@ -24,6 +24,7 @@ class GamesKey extends Model
      */
     protected $fillable = [
       // Play Fiver
+        'playfiver_url',
         'playfiver_secret',
         'playfiver_code',
         'playfiver_token',
