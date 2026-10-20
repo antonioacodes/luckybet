@@ -39,7 +39,7 @@
                             >
                                 Limpar
                             </button>
-                        </label>
+                        </div>
                         <button
                             type="button"
                             class="game-search-close"
@@ -60,11 +60,11 @@
                         <div class="game-search-heading">
                             <h2 id="game-search-title">
                                 {{ searchTerm.trim().length >= minimumCharacters
-                                    ? $t('Search results')
+                                    ? 'Resultados da busca'
                                     : 'Jogos para você' }}
                             </h2>
                             <span v-if="searching || (loadingSuggestions && searchTerm.trim().length < minimumCharacters)" class="game-search-loading-label" aria-live="polite">
-                                Buscando...
+                                {{ searching ? 'Buscando...' : 'Carregando sugestões...' }}
                             </span>
                         </div>
 
@@ -73,7 +73,7 @@
                         </p>
 
                         <div
-                            v-if="searching"
+                            v-if="searching || (loadingSuggestions && searchTerm.trim().length < minimumCharacters)"
                             class="game-search-grid"
                             aria-label="Carregando jogos"
                             aria-busy="true"
@@ -102,7 +102,7 @@
                         </div>
 
                         <div v-else class="game-search-empty game-search-empty-muted">
-                            Carregando jogos sugeridos...
+                            Nenhum jogo sugerido no momento.
                         </div>
                     </div>
                 </section>
