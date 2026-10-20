@@ -329,7 +329,7 @@ export default {
     color: #a6b7c0;
     opacity: 1;
 }
- .game-search-panel .game-search-toolbar .game-search-input-wrap > input[type="search"]::-webkit-search-cancel-button {
+.game-search-panel .game-search-toolbar .game-search-input-wrap > input[type="search"]::-webkit-search-cancel-button {
     display: none;
 }
 .game-search-clear,
@@ -346,7 +346,8 @@ export default {
 .game-search-clear {
     padding: 6px 9px;
     border-radius: 5px;
-    background: rgba(128, 158, 174, 0.35);
+    color: #e6f5ec;
+    background: rgba(0, 188, 87, 0.18);
     font-size: 13px;
 }
 .game-search-close {
