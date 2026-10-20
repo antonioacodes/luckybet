@@ -167,6 +167,9 @@ export default {
         document.removeEventListener("keydown", this.onGlobalKeydown);
         this.restorePageScroll();
         clearTimeout(this.debounceTimer);
+        if (this.searchStore.searchgameStatus) {
+            this.searchStore.closeSearch();
+        }
     },
     methods: {
         onGlobalKeydown(event) {
