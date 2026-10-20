@@ -51,13 +51,13 @@
       Qualquer outro valor vindo do backend fará com que este componente não renderize nada.
     -->
     <RouterLink 
-        v-if="game.distribution === 'igamingplay' || game.distribution === 'source'" 
+        v-if="['igamingplay', 'playfiver', 'source'].includes(game.distribution)" 
         :to="getRouterLink()" 
         class="h-full"
     >
         <div class="overflow-hidden relative rounded-lg text-gray-700 w-full h-full mr-4 cursor-pointer relative" @mouseover="showGameInfo = true" @mouseleave="showGameInfo = false">
 
-            <!-- Como já filtramos no pai, não precisamos de v-if/v-else internos para checar 'ig' -->
+            <!-- As capas externas de provedores são usadas diretamente pelo navegador. -->
             <img :src="game.cover" alt="" class="game-cover object-cover h-full w-full" :style="{ opacity: showGameInfo ? '0.5' : '1' }">
 
             <div class="">
