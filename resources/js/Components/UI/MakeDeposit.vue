@@ -94,7 +94,6 @@
     import DepositWidget from "@/Components/Widgets/DepositWidget.vue";
     import {onMounted, ref, watch, watchEffect} from "vue";
     import {initFlowbite} from "flowbite";
-    import HttpApi from "@/Services/HttpApi.js";
 
     import { useRouter } from 'vue-router';
 
@@ -106,8 +105,6 @@
                 isModalOpen: true,
                 isLoading: false,
                 modalDeposit: null,
-                isLoadingWallet: true,
-                wallet: null,
             }
         },
         setup(props) {
@@ -171,33 +168,9 @@
 
         },
         methods: {
-            getWallet: async function() {
-                const _this = this;
-
-                await HttpApi.get('profile/wallet')
-                    .then(response => {
-                        _this.wallet = response.data.wallet;
-                        _this.isLoadingWallet = false;
-                    })
-                    .catch(error => {
-                        Object.entries(JSON.parse(error.request.responseText)).forEach(([key, value]) => {
-                            if(value == 'unauthenticated') {
-                                localStorage. clear();
-                                clearInterval(this.processInterval);
-                            }
-                        });
-
-                        _this.isLoadingWallet = false;
-                    });
-            },
             toggleModalDeposit: function() {
                 this.modalDeposit.toggle();
             },
-        },
-        async created() {
-            await this.getWallet(); // Substitua 'seuMetodo' pelo nome do seu método
-
-            
         },
         watch: {
 
