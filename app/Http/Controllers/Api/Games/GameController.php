@@ -118,6 +118,46 @@ public function getGameById($id)
     /**
      * 📋 LISTAR JOGOS (método que você já tem)
      */
+    public function search(Request $request)
+    {
+        $term = trim((string) $request->query('q', ''));
+
+        if (mb_strlen($term) < 3) {
+            return response()->json([
+                'games' => [],
+                'minimum_characters' => 3,
+            ]);
+        }
+
+        $distribution = $this->configuredGameDistribution();
+
+        if (!$distribution) {
+            return response()->json(['games' => []]);
+        }
+
+        $searchPattern = '%' . $term . '%';
+        $games = Game::query()
+            ->select(['id', 'provider_id', 'game_code', 'game_name', 'cover', 'distribution', 'is_featured', 'views'])
+            ->where('status', 1)
+            ->where('distribution', $distribution)
+            ->whereHas('provider', function ($query) use ($distribution) {
+                $query->where('status', 1)
+                    ->where('distribution', $distribution);
+            })
+            ->where(function ($query) use ($searchPattern) {
+                $query->where('game_name', 'like', $searchPattern)
+                    ->orWhere('game_code', 'like', $searchPattern);
+            })
+            ->orderByDesc('is_featured')
+            ->orderByDesc('views')
+            ->limit(12)
+            ->get();
+
+        $games->each(fn ($game) => $game->setAppends([]));
+
+        return response()->json(['games' => $games]);
+    }
+
     public function index()
     {
         $distribution = $this->configuredGameDistribution();
