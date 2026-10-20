@@ -8,10 +8,11 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Staudenmeir\EloquentEagerLimit\HasEagerLimit;
 
 class Provider extends Model
 {
-    use HasFactory;
+    use HasFactory, HasEagerLimit;
 
     /**
      * The database table used by the model.
@@ -44,8 +45,15 @@ class Provider extends Model
         return $this->hasMany(Game::class, 'provider_id', 'id')
             ->orderBy('views', 'desc')
             ->where('show_home', 1)
-            ->where('status', 1)
-            ;
+            ->where('status', 1);
+    }
+
+    public function featuredGames(): HasMany
+    {
+        return $this->hasMany(Game::class, 'provider_id', 'id')
+            ->orderBy('views', 'desc')
+            ->where('is_featured', 1)
+            ->where('status', 1);
     }
 
 }
