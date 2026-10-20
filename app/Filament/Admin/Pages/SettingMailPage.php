@@ -29,7 +29,7 @@ class SettingMailPage extends Page
      */
     public static function canAccess(): bool
     {
-        return auth()->user()->hasRole('admin');
+        return auth()->check() && auth()->user()->hasRole('admin');
     }
 
     /**
