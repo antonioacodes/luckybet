@@ -1,10 +1,10 @@
 <?php
-namespace App\\Console\\Commands;
-use App\\Models\\Game;
-use App\\Models\\GamesKey;
-use App\\Models\\Provider;
-use Illuminate\\Console\\Command;
-use Illuminate\\Support\\Facades\\Http;
+namespace App\Console\Commands;
+use App\Models\Game;
+use App\Models\GamesKey;
+use App\Models\Provider;
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Http;
 class SyncPlayFiverGames extends Command
 {
     protected $signature='playfiver:sync-games';
