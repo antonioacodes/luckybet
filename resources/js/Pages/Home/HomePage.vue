@@ -1205,7 +1205,6 @@ box-shadow: 0px 0px 14px -22px rgba(43,43,43,1);background-color: var(--ci-gray-
 <div style="padding-top:30px;" ><BetHistoryComponent /></div>
             </div>
         </div>
-        <GameSearchOverlay :suggested-games="featured_games || []" />
     </BaseLayout>
 </template>
 
@@ -1221,7 +1220,6 @@ box-shadow: 0px 0px 14px -22px rgba(43,43,43,1);background-color: var(--ci-gray-
         ref
     } from "vue";
 
-    import GameSearchOverlay from "@/Components/UI/GameSearchOverlay.vue";
     import BaseLayout from "@/Layouts/BaseLayout.vue";
     import MakeDeposit from "@/Components/UI/MakeDeposit.vue";
     import {
@@ -1254,7 +1252,6 @@ box-shadow: 0px 0px 14px -22px rgba(43,43,43,1);background-color: var(--ci-gray-
       	searchTerm: '',
         props: [],
         components: {
-            GameSearchOverlay,
             CustomPagination,
             Pagination,
             ShowProviders,
