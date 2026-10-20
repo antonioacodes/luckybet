@@ -264,7 +264,7 @@ export default {
     justify-content: center;
     align-items: flex-start;
     padding: max(24px, env(safe-area-inset-top)) 20px max(24px, env(safe-area-inset-bottom));
-    background: rgba(2, 10, 15, 0.78);
+    background: rgba(0, 5, 9, 0.84);
     backdrop-filter: blur(3px);
     overflow-y: auto;
 }
@@ -275,10 +275,10 @@ export default {
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
     color: #f5f7f8;
-    background: #1b303e;
+    background: #071018;
     box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
 }
 .game-search-toolbar {
@@ -295,16 +295,17 @@ export default {
     align-items: center;
     gap: 12px;
     padding: 0 14px;
-    border: 1px solid rgba(255, 255, 255, 0.7);
-    border-radius: 8px;
-    background: rgba(8, 21, 29, 0.72);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 9px;
+    background: #0b1720;
+    transition: border-color 160ms ease, box-shadow 160ms ease;
 }
 .game-search-icon {
     width: 22px;
     height: 22px;
     flex: 0 0 auto;
     fill: none;
-    stroke: #a6c0cd;
+    stroke: #9eafb8;
     stroke-width: 2;
 }
 .game-search-panel .game-search-toolbar .game-search-input-wrap > input[type="search"] {
@@ -320,6 +321,10 @@ export default {
     font-size: 16px;
     line-height: 1.4;
 }
+.game-search-input-wrap:focus-within {
+    border-color: var(--ci-primary-color, #00bc57);
+    box-shadow: 0 0 0 2px rgba(0, 188, 87, 0.16);
+}
 .game-search-panel .game-search-toolbar .game-search-input-wrap > input[type="search"]::placeholder {
     color: #a6b7c0;
     opacity: 1;
@@ -334,6 +339,9 @@ export default {
     color: #e5edf1;
     background: transparent;
     cursor: pointer;
+}
+.game-search-close:hover {
+    color: var(--ci-primary-color, #00bc57);
 }
 .game-search-clear {
     padding: 6px 9px;
@@ -362,13 +370,15 @@ export default {
     min-height: 42px;
     padding: 0 22px;
     border-radius: 22px;
-    color: #fff;
-    background: rgba(5, 18, 26, 0.62);
+    color: #dce5e9;
+    background: #101d25;
     font-size: 14px;
     font-weight: 600;
 }
 .game-search-tab-active {
-    background: rgba(118, 157, 178, 0.42);
+    color: #fff;
+    background: rgba(0, 188, 87, 0.16);
+    box-shadow: inset 0 0 0 1px var(--ci-primary-color, #00bc57);
 }
 .game-search-content {
     min-height: 120px;
@@ -430,7 +440,7 @@ export default {
     width: 100%;
     aspect-ratio: 0.72;
     border-radius: 8px;
-    background: linear-gradient(100deg, #29414f 25%, #385563 40%, #29414f 65%);
+    background: linear-gradient(100deg, #14242d 25%, #20343e 40%, #14242d 65%);
     background-size: 200% 100%;
     animation: game-search-shimmer 1.15s ease-in-out infinite;
 }
@@ -439,7 +449,7 @@ export default {
     height: 10px;
     margin: 9px 2px 0;
     border-radius: 6px;
-    background: linear-gradient(100deg, #29414f 25%, #385563 40%, #29414f 65%);
+    background: linear-gradient(100deg, #14242d 25%, #20343e 40%, #14242d 65%);
     background-size: 200% 100%;
     animation: game-search-shimmer 1.15s ease-in-out infinite;
 }
