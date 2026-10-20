@@ -2,11 +2,7 @@
     <form wire:submit="submit">
         {{ $this->form }}
 
-        <br>
-        <div class="flex flex-wrap gap-3">
-            <x-filament::button type="submit">
-                Atualizar dados
-            </x-filament::button>
+        <div class="mt-4">
             <x-filament::button
                 type="button"
                 color="gray"
@@ -18,5 +14,10 @@
                 <span wire:loading wire:target="syncPlayFiverGames">Sincronizando...</span>
             </x-filament::button>
         </div>
+
+        <br>
+        <x-filament::button type="submit">
+            Atualizar dados
+        </x-filament::button>
     </form>
 </x-filament-panels::page>
