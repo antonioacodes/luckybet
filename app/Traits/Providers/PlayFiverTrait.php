@@ -1,17 +1,17 @@
 <?php
-namespace App\\Traits\\Providers;
+namespace App\Traits\Providers;
 
-use App\\Helpers\\Core;
-use App\\Models\\Game;
-use App\\Models\\GamesKey;
-use App\\Models\\Order;
-use App\\Models\\User;
-use App\\Models\\Wallet;
-use Illuminate\\Http\\JsonResponse;
-use Illuminate\\Http\\Request;
-use Illuminate\\Support\\Facades\\DB;
-use Illuminate\\Support\\Facades\\Http;
-use Illuminate\\Support\\Facades\\Log;
+use App\Helpers\Core;
+use App\Models\Game;
+use App\Models\GamesKey;
+use App\Models\Order;
+use App\Models\User;
+use App\Models\Wallet;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 trait PlayFiverTrait
 {
@@ -38,7 +38,7 @@ trait PlayFiverTrait
                 'game_original'=>(bool)$game->game_original,
                 'user_balance'=>(float)($wallet->balance+$wallet->balance_withdrawal+$wallet->balance_bonus), 'lang'=>'pt',
             ]);
-        } catch (\\Throwable $e) {
+        } catch (\Throwable $e) {
             Log::error('PlayFiver launch failed',['game_id'=>$game->id,'error'=>$e->getMessage()]);
             return response()->json(['error'=>'PlayFiver is temporarily unavailable'],502);
         }
@@ -105,7 +105,7 @@ trait PlayFiverTrait
     }
     private function resolvePlayFiverUser(string $code): ?User
     {
-        if (preg_match('/^user_(\\d+)$/',$code,$m)) return User::find((int)$m[1]);
+        if (preg_match('/^user_(\d+)$/',$code,$m)) return User::find((int)$m[1]);
         return User::where('email',$code)->first();
     }
 }
