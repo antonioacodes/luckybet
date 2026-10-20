@@ -10,13 +10,13 @@ use App\Http\Controllers\Api\Games\ProviderController;
 | ====================================
 */
 Route::middleware(['api'])->group(function () {
-  \tRoute::get('games/all', [GameController::class, 'index']);
+      Route::get('games/all', [GameController::class, 'index']);
     Route::get('games', [GameController::class, 'index']);
     Route::get('games/search', [GameController::class, 'search']);
     Route::get('games/single/{id}', [GameController::class, 'getGameById']);
     Route::get('games/category/{slug}', [GameController::class, 'index']);
     Route::get('games/provider/{slug}', [GameController::class, 'index']);
-  \tRoute::get('providers/{id}/games', [ProviderController::class, 'getGamesByProvider']);
+      Route::get('providers/{id}/games', [ProviderController::class, 'getGamesByProvider']);
 });
 
 Route::prefix('featured')
