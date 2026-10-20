@@ -41,7 +41,7 @@ class LayoutCssCustom extends Page implements HasForms
      */
     public static function canAccess(): bool
     {
-        return auth()->user()->hasRole('admin');
+        return auth()->check() && auth()->user()->hasRole('admin');
     }
 
     /**
