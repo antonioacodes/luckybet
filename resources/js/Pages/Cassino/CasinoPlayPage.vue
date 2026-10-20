@@ -16,7 +16,7 @@
         <span class="mt-2" style="font-weight: 500; color:#aaba9f;">Carregando Jogo</span>
       </div>
     </LoadingComponent>
-    <div v-if="!isLoading && game" :class="{ 'w-full': modeMovie, 'lg:w-2/3': !modeMovie }"
+    <div v-if="!isLoading && game && !undermaintenance" :class="{ 'w-full': modeMovie, 'lg:w-2/3': !modeMovie }"
       class="mt-6 mx-auto pr-4 px-2 lg:px-4 lg:py-6 relative mx-auto w-full sm:max-w-[690px] lg:max-w-[1110px]">
           <GameRewardBanner 
         v-if="game" 
@@ -265,7 +265,6 @@ export default {
         return response.data.game;
       } catch (error) {
         console.error('Erro ao buscar jogo:', error);
-        _this.undermaintenance = true;
         throw error;
       }
     },
@@ -331,7 +330,7 @@ export default {
           this.isLoading = false;
         }
       }
-    }
+    },
     toggleFavorite: function () {
       const _this = this;
       return HttpApi.post('games/favorite/' + _this.game.id, {})
