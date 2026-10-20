@@ -600,11 +600,11 @@ box-shadow: 0px 0px 14px -22px rgba(43,43,43,1);background-color: var(--ci-gray-
                                 <svg id="svg-lupa" data-v-49f1cded="" height="14px" viewBox="0 0 512 512" width="14px" xmlns="http://www.w3.org/2000/svg" class="text-texts w-5 p-0 m-0" style="width: 20px; height: 16px;"><path d="M500.3 443.7l-119.7-119.7c-15.03 22.3-34.26 41.54-56.57 56.57l119.7 119.7c15.62 15.62 40.95 15.62 56.57 0C515.9 484.7 515.9 459.3 500.3 443.7z" fill="currentColor"></path><path d="M207.1 0C93.12 0-.0002 93.13-.0002 208S93.12 416 207.1 416s208-93.13 208-208S322.9 0 207.1 0zM207.1 336c-70.58 0-128-57.42-128-128c0-70.58 57.42-128 128-128s128 57.42 128 128C335.1 278.6 278.6 336 207.1 336z" fill="currentColor" opacity="0.4"></path></svg>
                                 <span class="sr-only">Search</span>
                             </button>
-                            <a href="/casino/provider/category">
                             <input style="cursor: pointer;background-color: var(--input-primary);border-radius: 5px;" class="w-full placeholder-search p-2.5 lg:p-0 search-mobile" type="search"
                                    readonly
-                                   placeholder="Pesquise um jogo de cassino..." required>
-                            </a>
+                                   aria-label="Pesquisar jogos"
+                                   @click="toggleSearch"
+                                   placeholder="Pesquise um jogo de cassino...">
                            
                         </div>
                     </div>
@@ -1205,6 +1205,7 @@ box-shadow: 0px 0px 14px -22px rgba(43,43,43,1);background-color: var(--ci-gray-
 <div style="padding-top:30px;" ><BetHistoryComponent /></div>
             </div>
         </div>
+        <GameSearchOverlay :suggested-games="featured_games || []" />
     </BaseLayout>
 </template>
 
@@ -1220,6 +1221,7 @@ box-shadow: 0px 0px 14px -22px rgba(43,43,43,1);background-color: var(--ci-gray-
         ref
     } from "vue";
 
+    import GameSearchOverlay from "@/Components/UI/GameSearchOverlay.vue";
     import BaseLayout from "@/Layouts/BaseLayout.vue";
     import MakeDeposit from "@/Components/UI/MakeDeposit.vue";
     import {
@@ -1252,6 +1254,7 @@ box-shadow: 0px 0px 14px -22px rgba(43,43,43,1);background-color: var(--ci-gray-
       	searchTerm: '',
         props: [],
         components: {
+            GameSearchOverlay,
             CustomPagination,
             Pagination,
             ShowProviders,
@@ -1404,7 +1407,7 @@ box-shadow: 0px 0px 14px -22px rgba(43,43,43,1);background-color: var(--ci-gray-
         window.scrollTo({ top: 0, behavior: 'smooth' });
       },
             toggleSearch: function () {
-                this.searchGameStore.setSearchGameToogle();
+                this.searchGameStore.openSearch();
             },
             getBanners: async function () {
                 try {
